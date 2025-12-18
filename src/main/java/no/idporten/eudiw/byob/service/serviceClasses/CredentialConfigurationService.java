@@ -1,7 +1,7 @@
 package no.idporten.eudiw.byob.service.serviceClasses;
 
+import no.idporten.eudiw.byob.service.exception.BadRequestException;
 import no.idporten.eudiw.byob.service.model.Proof;
-import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -21,10 +21,9 @@ public class CredentialConfigurationService {
     public CredentialConfigurationService() {
         this.counter = 0;
     }
-    public String buildVct(List<String> registeredVcts, String vct) throws BadRequestException {
+    public String buildVct(List<String> registeredVcts, String vct) {
         if (vctAlreadyExists(registeredVcts, vct)) {
-            log.info("Credential configuration already exists");
-            throw new BadRequestException("invalid credential_configuration_id, already exists");
+            throw new BadRequestException("Credential configuration already exists");
         }else {
             return PREFIX + vct + counter ++ + SD_JWT_VC;
         }

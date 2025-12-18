@@ -26,13 +26,11 @@ public class CredentialConfigurationController {
 
     }
 
-    private static final Logger log = LoggerFactory.getLogger(CredentialConfigurationController.class);
     private Map<String, Proof> persistenceLayer = new HashMap<>();
 
 
     @PostMapping(path = "/v1/credential-configurations", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String,Proof>> createCredentialConfiguration(@RequestBody Proof proof) throws BadRequestException {
-        log.debug("REST request to save Credential Configuration : {}", proof);
         String id = service.buildVct(persistenceLayer.keySet().stream().toList(), proof.vct());
         this.persistenceLayer.put(proof.vct(), proof);
         return ResponseEntity.ok(service.getResponseEntityMap(id, proof));
