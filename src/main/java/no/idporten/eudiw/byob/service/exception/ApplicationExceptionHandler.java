@@ -21,6 +21,7 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler(ByobServiceException.class)
     public ResponseEntity<String> handleByobServiceException(ByobServiceException e) {
+        log.error("Intern feil : " + e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
