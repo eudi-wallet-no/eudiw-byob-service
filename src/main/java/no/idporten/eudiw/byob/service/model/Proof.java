@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Pattern;
 public record Proof(
         @JsonProperty("vct")
         @Pattern(regexp = "^[a-zA-Z0-9]$",
-                message = "username must be of 6 to 12 length with no special characters")
+                message = "vct kan ikke ha spesielle karakterer eller symboler")
         String vct,
         @JsonProperty("format")
         String format,
