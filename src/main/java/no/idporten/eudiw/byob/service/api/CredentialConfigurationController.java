@@ -1,10 +1,8 @@
 package no.idporten.eudiw.byob.service.api;
 
+import jakarta.validation.Valid;
 import no.idporten.eudiw.byob.service.model.Proof;
 import no.idporten.eudiw.byob.service.serviceClasses.CredentialConfigurationService;
-import org.apache.coyote.BadRequestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +28,7 @@ public class CredentialConfigurationController {
 
 
     @PostMapping(path = "/v1/credential-configurations", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String,Proof>> createCredentialConfiguration(@RequestBody Proof proof) throws BadRequestException {
+    public ResponseEntity<Map<String,Proof>> createCredentialConfiguration(@Valid @RequestBody Proof proof){
         String id = service.buildVct(persistenceLayer.keySet().stream().toList(), proof.vct());
         this.persistenceLayer.put(proof.vct(), proof);
         return ResponseEntity.ok(service.getResponseEntityMap(id, proof));
