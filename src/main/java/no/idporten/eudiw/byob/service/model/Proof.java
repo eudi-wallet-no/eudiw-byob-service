@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Pattern;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Proof(
         @JsonProperty("vct")
-        @Pattern(regexp = "^[a-zA-Z0-9]$",
+        @Pattern(regexp = "^[a-z0-9]$",
                 message = "vct kan ikke ha spesielle karakterer eller symboler")
         String vct,
         @JsonProperty("format")
