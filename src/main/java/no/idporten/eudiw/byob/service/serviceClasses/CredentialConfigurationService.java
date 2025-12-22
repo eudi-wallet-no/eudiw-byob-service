@@ -14,23 +14,22 @@ import java.util.Map;
 public class CredentialConfigurationService {
 
     private static final Logger log = LoggerFactory.getLogger(CredentialConfigurationService.class);
-    private int counter;
+    private int counter= 0;
     private static final String PREFIX = "net.eidas2sandkasse:";
     private static final String SD_JWT_VC = "_sd_jwt_vc";
 
     public CredentialConfigurationService() {
-        this.counter = 0;
+
     }
     public String buildVct(List<String> registeredVcts, String vct) {
         if (vctAlreadyExists(registeredVcts, vct)) {
             throw new BadRequestException("Credential configuration already exists");
         }else {
-            return PREFIX + vct + counter ++ + SD_JWT_VC;
+            return PREFIX + vct + counter++ + SD_JWT_VC;
         }
     }
 
     public boolean vctAlreadyExists(List<String> registeredVcts, String vct) {
-        log.info("checking if vct exists: " + vct);
         return registeredVcts.contains(vct);
     }
 

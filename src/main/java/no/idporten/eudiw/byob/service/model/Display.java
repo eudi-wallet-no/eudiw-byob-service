@@ -9,8 +9,8 @@ public record Display(
         @NotBlank
         @JsonProperty("name")
         String name,
-        @JsonProperty("description")
-        String description,
+        @JsonProperty("locale")
+        String locale,
         @JsonProperty("background_color")
         String backgroundColor,
         @JsonProperty("text_color")
