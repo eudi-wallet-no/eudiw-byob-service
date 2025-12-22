@@ -6,10 +6,7 @@ import no.idporten.eudiw.byob.service.serviceClasses.CredentialConfigurationServ
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -36,5 +33,10 @@ public class CredentialConfigurationController {
     @GetMapping(value = "/v1/credential-configurations", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<List<ByobInput>> retrieveAllCredentialConfigurations() {
         return ResponseEntity.ok(persistenceLayer.values().stream().toList());
+    }
+
+    @GetMapping(value = "/v1/credential-configurations/{id}", produces =  MediaType.APPLICATION_JSON_VALUE)
+    public  ResponseEntity<ByobInput> retrieveSelectedCredentialConfiguration(@PathVariable String id) {
+        return ResponseEntity.ok(persistenceLayer.get(id));
     }
 }
