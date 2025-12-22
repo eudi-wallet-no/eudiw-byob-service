@@ -112,9 +112,9 @@ class CredentialConfigurationControllerTest {
     @Test
     void getAllRequestTest() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        ByobInput input1 = new ByobInput("example1", "sd_jwt_vc", new ExampleCredentialMetadata("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
-        ByobInput input2 = new ByobInput("example2", "sd_jwt_vc", new ExampleCredentialMetadata("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
-        ByobInput input3 = new ByobInput("example3", "sd_jwt_vc", new ExampleCredentialMetadata("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        ByobInput input1 = new ByobInput("example1", "dc+sd-jwt", new ExampleCredentialMetadata("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        ByobInput input2 = new ByobInput("example2", "dc+sd-jwt", new ExampleCredentialMetadata("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        ByobInput input3 = new ByobInput("example3", "dc+sd-jwt", new ExampleCredentialMetadata("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
         persistenceLayer.put("example1", input1);
         persistenceLayer.put("example2", input2);
         persistenceLayer.put("example3", input3);
