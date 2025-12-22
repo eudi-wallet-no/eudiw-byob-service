@@ -2,6 +2,7 @@ package no.idporten.eudiw.byob.service.api;
 
 import jakarta.validation.Valid;
 import no.idporten.eudiw.byob.service.model.ByobInput;
+import no.idporten.eudiw.byob.service.model.ResponseTopObject;
 import no.idporten.eudiw.byob.service.serviceClasses.CredentialConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -31,8 +32,8 @@ public class CredentialConfigurationController {
     }
 
     @GetMapping(value = "/v1/credential-configurations", produces =  MediaType.APPLICATION_JSON_VALUE)
-    public  ResponseEntity<List<ByobInput>> retrieveAllCredentialConfigurations() {
-        return ResponseEntity.ok(persistenceLayer.values().stream().toList());
+    public  ResponseEntity<ResponseTopObject> retrieveAllCredentialConfigurations() {
+        return ResponseEntity.ok(service.prepareResponse(persistenceLayer));
     }
 
     @GetMapping(value = "/v1/credential-configurations/{id}", produces =  MediaType.APPLICATION_JSON_VALUE)

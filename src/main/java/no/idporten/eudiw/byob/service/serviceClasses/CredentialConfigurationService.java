@@ -2,6 +2,7 @@ package no.idporten.eudiw.byob.service.serviceClasses;
 
 import no.idporten.eudiw.byob.service.exception.BadRequestException;
 import no.idporten.eudiw.byob.service.model.ByobInput;
+import no.idporten.eudiw.byob.service.model.ResponseTopObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,5 +38,9 @@ public class CredentialConfigurationService {
         HashMap<String, ByobInput> proofMap = new HashMap<>();
         proofMap.put(credential_configuration, proof);
         return proofMap;
+    }
+
+    public ResponseTopObject prepareResponse(Map<String, ByobInput> entries) {
+    return new ResponseTopObject(entries.values().stream().toList());
     }
 }

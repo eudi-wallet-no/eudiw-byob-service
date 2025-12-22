@@ -1,7 +1,7 @@
 package no.idporten.eudiw.byob.service.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.idporten.eudiw.byob.service.model.ByobInput;
+import no.idporten.eudiw.byob.service.model.*;
 import no.idporten.eudiw.byob.service.serviceClasses.CredentialConfigurationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -104,5 +106,21 @@ class CredentialConfigurationControllerTest {
                         .content(mapper.writeValueAsString(input)))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(testMap)));
+    }
+
+    @DisplayName("that we get all the registered entries when calling GET to credential-configurations endpoint")
+    @Test
+    void getAllRequestTest() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        ByobInput input1 = new ByobInput("example1", "sd_jwt_vc", new ExampleCredentialMetadata("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        ByobInput input2 = new ByobInput("example2", "sd_jwt_vc", new ExampleCredentialMetadata("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        ByobInput input3 = new ByobInput("example3", "sd_jwt_vc", new ExampleCredentialMetadata("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        persistenceLayer.put("example1", input1);
+        persistenceLayer.put("example2", input2);
+        persistenceLayer.put("example3", input3);
+        Mockito.when(service.prepareResponse(anyMap())).thenReturn(new ResponseTopObject(persistenceLayer.values().stream().toList()));
+        mockMvc.perform(get("/v1/credential-configurations"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(new ResponseTopObject(service.prepareResponse(persistenceLayer).byobs()))));
     }
 }
