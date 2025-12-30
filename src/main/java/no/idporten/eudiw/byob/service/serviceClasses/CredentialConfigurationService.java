@@ -8,12 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Service
 public class CredentialConfigurationService {
 
+    private Map<String, ByobInput> persistenceLayer = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(CredentialConfigurationService.class);
     private int counter= 0;
     private static final String PREFIX = "net.eidas2sandkasse:";
@@ -22,25 +22,42 @@ public class CredentialConfigurationService {
     public CredentialConfigurationService() {
 
     }
-    public String buildVct(List<String> registeredVcts, String vct) {
-        if (vctAlreadyExists(registeredVcts, vct)) {
+
+    /**
+     * Takes in user input, sends input to check if the VCT is already registered, and if
+     * not already registered, it gives back a generated id which is not used for anything
+     * as well as the proof.
+     *
+     * @param proof user input that user POSTS in to BYOB in order to "build your own bevis"
+     * @return a new HashMap with an id that consists of a set prefix, the VCT given in input,
+     *  a counter and format.
+     */
+    public Map<String, ByobInput> getResponseModel(ByobInput proof) {
+        String id = buildVct(proof);
+        HashMap<String, ByobInput> response = new HashMap<>();
+        response.put(id, proof);
+        return response;
+    }
+
+    public String buildVct(ByobInput proof) {
+        if (persistenceLayer.containsKey(proof.vct())) {
             throw new BadRequestException("Credential configuration already exists");
         }else {
-            return PREFIX + vct + counter++ + SD_JWT_VC;
+            updatePersistenceLayer(proof);
+            return PREFIX + proof.vct() + counter++ + SD_JWT_VC;
         }
     }
 
-    public boolean vctAlreadyExists(List<String> registeredVcts, String vct) {
-        return registeredVcts.contains(vct);
+    public void updatePersistenceLayer(ByobInput proof) {
+        this.persistenceLayer.put(proof.vct(), proof);
     }
 
-    public Map<String, ByobInput> getResponseModel(String credential_configuration, ByobInput proof) {
-        HashMap<String, ByobInput> proofMap = new HashMap<>();
-        proofMap.put(credential_configuration, proof);
-        return proofMap;
+    public ResponseTopObject getAllEntries() {
+        return new ResponseTopObject(persistenceLayer.values().stream().toList());
+
     }
 
-    public ResponseTopObject prepareResponse(Map<String, ByobInput> entries) {
-    return new ResponseTopObject(entries.values().stream().toList());
+    public ByobInput searchCredentialConfiguration(String id) {
+        return persistenceLayer.get(id);
     }
 }

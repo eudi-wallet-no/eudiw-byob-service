@@ -22,22 +22,19 @@ public class CredentialConfigurationController {
 
     }
 
-    private Map<String, ByobInput> persistenceLayer = new HashMap<>();
 
     @PostMapping(path = "/v1/credential-configurations", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, ByobInput>> createCredentialConfiguration(@Valid @RequestBody ByobInput proof){
-        String id = service.buildVct(persistenceLayer.keySet().stream().toList(), proof.vct());
-        this.persistenceLayer.put(proof.vct(), proof);
-        return ResponseEntity.ok(service.getResponseModel(id, proof));
+        return ResponseEntity.ok(service.getResponseModel(proof));
     }
 
     @GetMapping(value = "/v1/credential-configurations", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<ResponseTopObject> retrieveAllCredentialConfigurations() {
-        return ResponseEntity.ok(service.prepareResponse(persistenceLayer));
+        return ResponseEntity.ok(service.getAllEntries());
     }
 
     @GetMapping(value = "/v1/credential-configurations/{id}", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<ByobInput> retrieveSelectedCredentialConfiguration(@PathVariable String id) {
-        return ResponseEntity.ok(persistenceLayer.get(id));
+        return ResponseEntity.ok(service.searchCredentialConfiguration(id));
     }
 }
