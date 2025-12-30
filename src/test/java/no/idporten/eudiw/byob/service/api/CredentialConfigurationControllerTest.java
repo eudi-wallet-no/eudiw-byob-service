@@ -97,10 +97,8 @@ class CredentialConfigurationControllerTest {
         Map<String, ByobInput> testMap = new HashMap<>();
         List<String> vcts = new ArrayList<>();
         vcts.add("mockvctthisisempty");
-        String id = service.buildVct(vcts, input.vct());
+        String id = "net.eidas2sandkasse:" + input.vct() + 0 + "_sd_jwt_vc";
         testMap.put(id, input);
-        Mockito.when(service.getResponseModel(id, input)).thenReturn(testMap);
-        Mockito.when(service.buildVct(ArgumentMatchers.anyList(), eq(input.vct()))).thenReturn(id);
         mockMvc.perform(post("/v1/credential-configurations")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(input)))
@@ -118,9 +116,9 @@ class CredentialConfigurationControllerTest {
         persistenceLayer.put("example1", input1);
         persistenceLayer.put("example2", input2);
         persistenceLayer.put("example3", input3);
-        Mockito.when(service.prepareResponse(anyMap())).thenReturn(new ResponseTopObject(persistenceLayer.values().stream().toList()));
+        Mockito.when(service.getAllEntries()).thenReturn(new ResponseTopObject(persistenceLayer.values().stream().toList()));
         mockMvc.perform(get("/v1/credential-configurations"))
                 .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(new ResponseTopObject(service.prepareResponse(persistenceLayer).byobs()))));
+                .andExpect(content().json(mapper.writeValueAsString(new ResponseTopObject(service.getAllEntries().byobs()))));
     }
 }
