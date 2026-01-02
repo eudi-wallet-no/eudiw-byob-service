@@ -15,13 +15,13 @@ public class ApplicationExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<String> handleBadRequestException(BadRequestException e) {
-        log.info("Brukerfeil : " + e.getMessage(), e);
+        log.info("User error : " + e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ByobServiceException.class)
     public ResponseEntity<String> handleByobServiceException(ByobServiceException e) {
-        log.error("Intern feil : " + e.getMessage(), e);
+        log.error("Internal error : " + e.getMessage(), e);
         return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
