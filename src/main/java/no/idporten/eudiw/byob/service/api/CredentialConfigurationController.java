@@ -35,6 +35,9 @@ public class CredentialConfigurationController {
 
     @GetMapping(value = "/v1/credential-configurations/{id}", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<ByobInput> retrieveSelectedCredentialConfiguration(@PathVariable String id) {
-        return ResponseEntity.ok(service.searchCredentialConfiguration(id));
+        if (service.searchCredentialConfiguration(id) != null) {
+            return ResponseEntity.ok(service.searchCredentialConfiguration(id));
+        }
+        return ResponseEntity.notFound().build();
     }
 }

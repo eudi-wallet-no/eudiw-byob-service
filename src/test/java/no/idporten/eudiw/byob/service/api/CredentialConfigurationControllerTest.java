@@ -6,10 +6,7 @@ import no.idporten.eudiw.byob.service.serviceClasses.CredentialConfigurationServ
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -35,7 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 class CredentialConfigurationControllerTest {
 
-    private static final Logger log = LoggerFactory.getLogger(CredentialConfigurationControllerTest.class);
     private final String example = """
             {
             "vct": "foomittbevisheisenleisensen",
@@ -120,5 +114,12 @@ class CredentialConfigurationControllerTest {
         mockMvc.perform(get("/v1/credential-configurations"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(new ResponseTopObject(service.getAllEntries().byobs()))));
+    }
+
+    @DisplayName("that it gives 404 when the id is not found")
+    @Test
+    void getByIdWhenIdFoesNotExistTest() throws Exception {
+        mockMvc.perform(get("/v1/credential-configurations/{id}", "nonexistent"))
+                .andExpect(status().isNotFound());
     }
 }
