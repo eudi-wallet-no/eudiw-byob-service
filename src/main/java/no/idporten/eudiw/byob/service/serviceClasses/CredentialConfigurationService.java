@@ -42,10 +42,9 @@ public class CredentialConfigurationService {
     public String buildVct(ByobInput proof) {
         if (persistenceLayer.containsKey(proof.vct())) {
             throw new BadRequestException("Credential configuration already exists");
-        }else {
+        }
             updatePersistenceLayer(proof);
             return PREFIX + proof.vct() + counter++ + SD_JWT_VC;
-        }
     }
 
     public void updatePersistenceLayer(ByobInput proof) {
