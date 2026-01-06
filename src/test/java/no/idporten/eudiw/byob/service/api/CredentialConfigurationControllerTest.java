@@ -68,7 +68,7 @@ class CredentialConfigurationControllerTest {
 
     private CredentialConfigurationController controller;
 
-    private Map<String, ByobRequest> persistenceLayer;
+    private Map<String, credentialConfiguration> persistenceLayer;
 
     @Autowired
     public CredentialConfigurationControllerTest(MockMvc mockMvc, CredentialConfigurationService service) {
@@ -87,8 +87,8 @@ class CredentialConfigurationControllerTest {
     void postRequestTest() throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
-        ByobRequest input = mapper.readValue(example, ByobRequest.class);
-        Map<String, ByobRequest> testMap = new HashMap<>();
+        credentialConfiguration input = mapper.readValue(example, credentialConfiguration.class);
+        Map<String, credentialConfiguration> testMap = new HashMap<>();
         List<String> vcts = new ArrayList<>();
         vcts.add("mockvctthisisempty");
         String id = "net.eidas2sandkasse:" + input.vct() + 0 + "_sd_jwt_vc";
@@ -104,16 +104,16 @@ class CredentialConfigurationControllerTest {
     @Test
     void getAllRequestTest() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        ByobRequest input1 = new ByobRequest("example1", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
-        ByobRequest input2 = new ByobRequest("example2", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
-        ByobRequest input3 = new ByobRequest("example3", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        credentialConfiguration input1 = new credentialConfiguration("example1", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        credentialConfiguration input2 = new credentialConfiguration("example2", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        credentialConfiguration input3 = new credentialConfiguration("example3", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
         persistenceLayer.put("example1", input1);
         persistenceLayer.put("example2", input2);
         persistenceLayer.put("example3", input3);
-        Mockito.when(service.getAllEntries()).thenReturn(new ByobResponse(persistenceLayer.values().stream().toList()));
+        Mockito.when(service.getAllEntries()).thenReturn(new CredentialConfigurations(persistenceLayer.values().stream().toList()));
         mockMvc.perform(get("/v1/credential-configurations"))
                 .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(new ByobResponse(service.getAllEntries().credentialConfigurations()))));
+                .andExpect(content().json(mapper.writeValueAsString(new CredentialConfigurations(service.getAllEntries().credentialConfigurations()))));
     }
 
     @DisplayName("that it gives 404 when the id is not found")

@@ -6,8 +6,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import no.idporten.eudiw.byob.service.model.ByobRequest;
-import no.idporten.eudiw.byob.service.model.ByobResponse;
+import no.idporten.eudiw.byob.service.model.credentialConfiguration;
+import no.idporten.eudiw.byob.service.model.CredentialConfigurations;
 import no.idporten.eudiw.byob.service.service.CredentialConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -40,7 +40,7 @@ public class CredentialConfigurationController {
 
 
     @PostMapping(path = "/v1/credential-configurations", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, ByobRequest>> createCredentialConfiguration(@Valid @RequestBody ByobRequest proof){
+    public ResponseEntity<Map<String, credentialConfiguration>> createCredentialConfiguration(@Valid @RequestBody credentialConfiguration proof){
         return ResponseEntity.ok(service.getResponseModel(proof));
     }
 
@@ -54,7 +54,7 @@ public class CredentialConfigurationController {
     })
 
     @GetMapping(value = "/v1/credential-configurations", produces =  MediaType.APPLICATION_JSON_VALUE)
-    public  ResponseEntity<ByobResponse> retrieveAllCredentialConfigurations() {
+    public  ResponseEntity<CredentialConfigurations> retrieveAllCredentialConfigurations() {
         return ResponseEntity.ok(service.getAllEntries());
     }
 
@@ -69,7 +69,7 @@ public class CredentialConfigurationController {
     })
 
     @GetMapping(value = "/v1/credential-configurations/{id}", produces =  MediaType.APPLICATION_JSON_VALUE)
-    public  ResponseEntity<ByobRequest> retrieveSelectedCredentialConfiguration(@PathVariable String id) {
+    public  ResponseEntity<credentialConfiguration> retrieveSelectedCredentialConfiguration(@PathVariable String id) {
         return ResponseEntity.ofNullable(service.searchCredentialConfiguration(id));
     }
 }

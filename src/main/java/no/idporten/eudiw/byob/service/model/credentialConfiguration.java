@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Pattern;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record ByobRequest(
+public record credentialConfiguration(
         @JsonProperty("vct")
         @Pattern(regexp = "^[a-z0-9_:]{3,255}$",
                 message = "vct kan ikke ha spesielle karakterer eller symboler")
