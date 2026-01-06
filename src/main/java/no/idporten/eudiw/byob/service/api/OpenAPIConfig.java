@@ -11,7 +11,7 @@ public class OpenAPIConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(new Info().title("Bring Your Own Bevis-API").version("1.0").description("API for å " +
-                "enkelt kunne legge til nye bevis i sandkassemiljøet. Her kan du også se alle bevisene som er laget " +
+                "enkelt kunne legge til nye bevistyper i sandkassemiljøet. Her kan du også se alle bevistypene som er laget " +
                 "med BYOB (Bring Your Own Bevis) utstederen, samt søke blant bevisene."));
     }
 }
