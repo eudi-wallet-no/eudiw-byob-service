@@ -1,5 +1,10 @@
 package no.idporten.eudiw.byob.service.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import no.idporten.eudiw.byob.service.model.ByobInput;
 import no.idporten.eudiw.byob.service.model.ResponseTopObject;
@@ -22,16 +27,46 @@ public class CredentialConfigurationController {
 
     }
 
+    @Operation(
+            summary = "Lag et nytt bevis via BYOB utstederen",
+            description = "Her kan du registrere bevis for å utforske bevisutstedelse på en enkel og rask måte.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Beviset ble laget",
+                    content = @Content(mediaType = "application/json"
+                    )),
+            @ApiResponse(responseCode = "500", description = "Internal error",
+                    content = @Content(examples= @ExampleObject(description = "Intern feil", value = ByobServiceAPISwaggerExamples.SERVER_ERROR_EXAMPLE)))
+    })
+
 
     @PostMapping(path = "/v1/credential-configurations", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, ByobInput>> createCredentialConfiguration(@Valid @RequestBody ByobInput proof){
         return ResponseEntity.ok(service.getResponseModel(proof));
     }
 
+    @Operation(
+            summary = "Hente alle bevis som er laget med BYOB-en (Bring Your Own Bevis)",
+            description = "Hent alle bevisene som er laget ved hjelp av BYOB-utstederen.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Alle bevis utstedt av BYOB-utstederen hentes"),
+            @ApiResponse(responseCode = "500", description = "Internal error",
+                    content = @Content(examples= @ExampleObject(description = "Intern feil", value = ByobServiceAPISwaggerExamples.SERVER_ERROR_EXAMPLE)))
+    })
+
     @GetMapping(value = "/v1/credential-configurations", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<ResponseTopObject> retrieveAllCredentialConfigurations() {
         return ResponseEntity.ok(service.getAllEntries());
     }
+
+    @Operation(
+            summary = "Hente et enkelt bevis registrert av BYOB-utstederen",
+            description = "Søk i URL-en med stiparameter som er VCT-en til ønsket bevis.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Beviset med matchende VCT hentes fra lagring"),
+            @ApiResponse(responseCode = "500", description = "Intern feil"),
+            @ApiResponse(responseCode = "404", description = "Fant ingen bevis med gitt VCT",
+                    content = @Content(examples= @ExampleObject(description = "Brukerfeil", value = ByobServiceAPISwaggerExamples.NOT_FOUND)))
+    })
 
     @GetMapping(value = "/v1/credential-configurations/{id}", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<ByobInput> retrieveSelectedCredentialConfiguration(@PathVariable String id) {
