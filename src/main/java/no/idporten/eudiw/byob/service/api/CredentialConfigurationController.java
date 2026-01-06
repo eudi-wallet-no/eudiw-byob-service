@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
-import no.idporten.eudiw.byob.service.model.credentialConfiguration;
+import no.idporten.eudiw.byob.service.model.CredentialConfiguration;
 import no.idporten.eudiw.byob.service.model.CredentialConfigurations;
 import no.idporten.eudiw.byob.service.service.CredentialConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class CredentialConfigurationController {
     }
 
     @Operation(
-            summary = "Lag en n bevistype",
+            summary = "Lag en ny bevistype",
             description = "Her kan du registrere en ny bevistype for å utforske bevisutstedelse på en enkel og rask måte.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Bevistypen ble laget",
@@ -40,13 +40,13 @@ public class CredentialConfigurationController {
 
 
     @PostMapping(path = "/v1/credential-configurations", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, credentialConfiguration>> createCredentialConfiguration(@Valid @RequestBody credentialConfiguration proof){
+    public ResponseEntity<Map<String, CredentialConfiguration>> createCredentialConfiguration(@Valid @RequestBody CredentialConfiguration proof){
         return ResponseEntity.ok(service.getResponseModel(proof));
     }
 
     @Operation(
             summary = "Hente alle bevistyper som er laget med BYOB-en (Bring Your Own Bevis)",
-            description = "Hent alle bevistypene som er laget via dette API-et.")
+            description = "Hent alle dynamiske bevistyper (Bring Your Own Bevis/BYOB)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Alle bevistypene fra BYOB hentes"),
             @ApiResponse(responseCode = "500", description = "Internal error",
@@ -59,8 +59,8 @@ public class CredentialConfigurationController {
     }
 
     @Operation(
-            summary = "Hente en enkelt bevistype med gitt id",
-            description = "Gitt insatt vct som stiparameter, så henter den registrert bevistype dersom denne eksisterer")
+            summary = "Hent en gitt bevistype ut frå id",
+            description = "Hent bevistype ut fra id der id er vct")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Bevistype med matchende VCT hentes fra lagring"),
             @ApiResponse(responseCode = "500", description = "Intern feil"),
@@ -69,7 +69,7 @@ public class CredentialConfigurationController {
     })
 
     @GetMapping(value = "/v1/credential-configurations/{id}", produces =  MediaType.APPLICATION_JSON_VALUE)
-    public  ResponseEntity<credentialConfiguration> retrieveSelectedCredentialConfiguration(@PathVariable String id) {
+    public  ResponseEntity<CredentialConfiguration> retrieveSelectedCredentialConfiguration(@PathVariable String id) {
         return ResponseEntity.ofNullable(service.searchCredentialConfiguration(id));
     }
 }

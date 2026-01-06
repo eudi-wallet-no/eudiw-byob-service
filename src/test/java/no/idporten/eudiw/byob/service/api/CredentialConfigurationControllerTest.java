@@ -68,7 +68,7 @@ class CredentialConfigurationControllerTest {
 
     private CredentialConfigurationController controller;
 
-    private Map<String, credentialConfiguration> persistenceLayer;
+    private Map<String, CredentialConfiguration> persistenceLayer;
 
     @Autowired
     public CredentialConfigurationControllerTest(MockMvc mockMvc, CredentialConfigurationService service) {
@@ -87,8 +87,8 @@ class CredentialConfigurationControllerTest {
     void postRequestTest() throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
-        credentialConfiguration input = mapper.readValue(example, credentialConfiguration.class);
-        Map<String, credentialConfiguration> testMap = new HashMap<>();
+        CredentialConfiguration input = mapper.readValue(example, CredentialConfiguration.class);
+        Map<String, CredentialConfiguration> testMap = new HashMap<>();
         List<String> vcts = new ArrayList<>();
         vcts.add("mockvctthisisempty");
         String id = "net.eidas2sandkasse:" + input.vct() + 0 + "_sd_jwt_vc";
@@ -104,9 +104,9 @@ class CredentialConfigurationControllerTest {
     @Test
     void getAllRequestTest() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        credentialConfiguration input1 = new credentialConfiguration("example1", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
-        credentialConfiguration input2 = new credentialConfiguration("example2", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
-        credentialConfiguration input3 = new credentialConfiguration("example3", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        CredentialConfiguration input1 = new CredentialConfiguration("example1", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        CredentialConfiguration input2 = new CredentialConfiguration("example2", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
+        CredentialConfiguration input3 = new CredentialConfiguration("example3", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<Display>(), new ArrayList<Claims>()));
         persistenceLayer.put("example1", input1);
         persistenceLayer.put("example2", input2);
         persistenceLayer.put("example3", input3);

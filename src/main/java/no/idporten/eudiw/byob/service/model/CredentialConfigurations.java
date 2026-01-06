@@ -6,6 +6,6 @@ import java.util.List;
 
 public record CredentialConfigurations(
         @JsonProperty("credential_configurations")
-        List<credentialConfiguration> credentialConfigurations
+        List<CredentialConfiguration> credentialConfigurations
 ) {
 }
