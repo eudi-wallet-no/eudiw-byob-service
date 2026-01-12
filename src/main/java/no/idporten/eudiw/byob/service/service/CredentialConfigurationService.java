@@ -2,6 +2,7 @@ package no.idporten.eudiw.byob.service.service;
 
 import no.idporten.eudiw.byob.service.exception.BadRequestException;
 import no.idporten.eudiw.byob.service.model.CredentialConfiguration;
+import no.idporten.eudiw.byob.service.model.CredentialConfigurationRequestResource;
 import no.idporten.eudiw.byob.service.model.CredentialConfigurations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,12 +32,15 @@ public class CredentialConfigurationService {
      * @param credentialConfiguration user input that user POSTS in to BYOB in order to "build your own bevis"
      * @return a new CredentialConfiguration with an id that consists of a set prefix, the VCT given in input plus format.
      */
-    public CredentialConfiguration getResponseModel(CredentialConfiguration credentialConfiguration) {
+    public CredentialConfiguration getResponseModel(CredentialConfigurationRequestResource credentialConfiguration) {
         return saveCredentialConfiguration(credentialConfiguration);
     }
 
-    protected CredentialConfiguration saveCredentialConfiguration(CredentialConfiguration credentialConfiguration) {
-        String vct = VCT_PREFIX + credentialConfiguration.vct();
+    protected CredentialConfiguration saveCredentialConfiguration(CredentialConfigurationRequestResource credentialConfiguration) {
+        String vct = credentialConfiguration.vct();
+        if (!credentialConfiguration.vct().startsWith(VCT_PREFIX)) {
+            vct = VCT_PREFIX + vct;
+        }
         if (persistenceLayer.containsKey(vct)) {
             throw new BadRequestException("Credential configuration already exists for vct=%s".formatted(credentialConfiguration.vct()));
         }

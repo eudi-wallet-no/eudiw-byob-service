@@ -6,9 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Display(
-        @NotBlank
+        @NotBlank(message = "Display name is blank")
         @JsonProperty("name")
         String name,
+        @NotBlank(message = "Display locale is blank")
         @JsonProperty("locale")
         String locale,
         @JsonProperty("background_color")

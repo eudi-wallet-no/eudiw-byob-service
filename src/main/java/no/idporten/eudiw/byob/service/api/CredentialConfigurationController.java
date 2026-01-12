@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import no.idporten.eudiw.byob.service.model.CredentialConfiguration;
+import no.idporten.eudiw.byob.service.model.CredentialConfigurationRequestResource;
 import no.idporten.eudiw.byob.service.model.CredentialConfigurations;
 import no.idporten.eudiw.byob.service.service.CredentialConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,8 @@ public class CredentialConfigurationController {
                     content = @Content(examples= @ExampleObject(description = "Intern feil", value = ByobServiceAPISwaggerExamples.SERVER_ERROR_EXAMPLE)))
     })
     @PostMapping(path = "/v1/credential-configuration", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CredentialConfiguration> createCredentialConfiguration(@Valid @RequestBody CredentialConfiguration proof){
-        return ResponseEntity.ok(service.getResponseModel(proof));
+    public ResponseEntity<CredentialConfiguration> createCredentialConfiguration(@Valid @RequestBody CredentialConfigurationRequestResource credentialConfig){
+        return ResponseEntity.ok(service.getResponseModel(credentialConfig));
     }
 
     @Operation(
