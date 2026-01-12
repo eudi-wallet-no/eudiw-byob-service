@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static no.idporten.eudiw.byob.service.service.CredentialConfigurationService.VCT_PREFIX;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -30,36 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 class CredentialConfigurationControllerTest {
 
-    private final String EXAMPLE = """
-        {
-            "vct": "foomittbevisheisenleisensen",
-            "format": "dc+sd-jwt",
-            "example_credential_metadata": {
-                "foo": "bar"
-            },
-            "credential_metadata": {
-                "display": [
-                    {
-                        "name": "MinID PID",
-                        "locale": "no",
-                        "background_color": "#afcee9",
-                        "text_color": "#002c54"
-                    }
-                ],
-                "claims": [
-                    {
-                        "path": "foo",
-                        "mandatory": true,
-                        "display": [{
-                            "name": "MinID PID",
-                            "locale": "no",
-                            "background_color": "#afcee9",
-                            "text_color": "#002c54"
-                        }]
-                    }
-                ]
-            }
-        }""";
 
     private MockMvc mockMvc;
 
@@ -87,26 +58,84 @@ class CredentialConfigurationControllerTest {
     void postRequestTest() throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
-        CredentialConfiguration input = mapper.readValue(EXAMPLE, CredentialConfiguration.class);
-        Map<String, CredentialConfiguration> testMap = new HashMap<>();
-        List<String> vcts = new ArrayList<>();
-        vcts.add("mockvctthisisempty");
-        String id = "net.eidas2sandkasse:" + input.vct() + 0 + "_sd_jwt_vc";
-        testMap.put(id, input);
-        mockMvc.perform(post("/v1/credential-configurations")
+        CredentialConfiguration input = mapper.readValue(getRequest("bevisetmitt"), CredentialConfiguration.class);
+        CredentialConfiguration output = mapper.readValue(getResponse("bevisetmitt"), CredentialConfiguration.class);
+        mockMvc.perform(post("/v1/credential-configuration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(input)))
                 .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(testMap)));
+                .andExpect(content().json(mapper.writeValueAsString(output)));
+    }
+
+    private String getRequest(String vct) throws Exception {
+
+        return
+                """ 
+                {
+                    "vct": "%s",
+                    "format": "dc+sd-jwt",
+                    %s,
+                    %s
+                }
+                """.formatted(vct, getExampleCredentialMetadata(), getCredentialMetadata());
+    }
+
+    private String getResponse(String vctName) throws Exception {
+        String credentialConfigurationId = "net.eidas2sandkasse:" + vctName + "_sd_jwt_vc";
+        String vct = "net.eidas2sandkasse:" + vctName;
+        return
+                """ 
+                {
+                    "credential_configuration_id": "%s",
+                    "vct": "%s",
+                    "format": "dc+sd-jwt",
+                    %s,
+                    %s
+                }
+                """.formatted(credentialConfigurationId, vct, getExampleCredentialMetadata(), getCredentialMetadata());
+    }
+
+    private String getExampleCredentialMetadata() {
+        return """
+                "example_credential_data": {
+                    "json": "todo: implement me"
+                }""";
+    }
+
+    private String getCredentialMetadata() {
+        return """
+                "credential_metadata": {
+                    "display": [
+                        {
+                            "name": "MinID PID",
+                            "locale": "no",
+                            "background_color": "#afcee9",
+                            "text_color": "#002c54"
+                        }
+                    ],
+                    "claims": [
+                        {
+                            "path": "foo",
+                            "mandatory": true,
+                            "display": [{
+                                "name": "MinID PID",
+                                "locale": "no",
+                                "background_color": "#afcee9",
+                                "text_color": "#002c54"
+                            }]
+                        }
+                    ]
+                
+                }""";
     }
 
     @DisplayName("that we get all the registered entries when calling GET to credential-configurations endpoint")
     @Test
     void getAllRequestTest() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
-        CredentialConfiguration input1 = new CredentialConfiguration("example1_sd-jwt","example1", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
-        CredentialConfiguration input2 = new CredentialConfiguration("example2_sd-jwt","example2", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
-        CredentialConfiguration input3 = new CredentialConfiguration("example3_sd-jwt","example3", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
+        CredentialConfiguration input1 = new CredentialConfiguration("example1_sd-jwt", "example1", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
+        CredentialConfiguration input2 = new CredentialConfiguration("example2_sd-jwt", "example2", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
+        CredentialConfiguration input3 = new CredentialConfiguration("example3_sd-jwt", "example3", "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
         persistenceLayer.put("example1", input1);
         persistenceLayer.put("example2", input2);
         persistenceLayer.put("example3", input3);
@@ -120,6 +149,14 @@ class CredentialConfigurationControllerTest {
     @Test
     void getByIdWhenIdFoesNotExistTest() throws Exception {
         mockMvc.perform(get("/v1/credential-configurations/{id}", "nonexistent"))
+                .andExpect(status().isNotFound());
+    }
+
+
+    @DisplayName("that it gives 404 when the credentialConfigurationId is not found")
+    @Test
+    void searchByCredentialConfigurationIdWhenIdFoesNotExistTest() throws Exception {
+        mockMvc.perform(get("/v1/credential-configurations/search").param("credentialConfigurationId", "nonexistent"))
                 .andExpect(status().isNotFound());
     }
 }

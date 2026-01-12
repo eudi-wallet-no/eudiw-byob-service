@@ -29,22 +29,28 @@ public class CredentialConfigurationService {
      * as well as the credentialConfiguration.
      *
      * @param credentialConfiguration user input that user POSTS in to BYOB in order to "build your own bevis"
-     * @return a new HashMap with an id that consists of a set prefix, the VCT given in input,
-     * a counter and format.
+     * @return a new CredentialConfiguration with an id that consists of a set prefix, the VCT given in input plus format.
      */
-    public Map<String, CredentialConfiguration> getResponseModel(CredentialConfiguration credentialConfiguration) {
-        String id = buildVct(credentialConfiguration);
-        HashMap<String, CredentialConfiguration> response = new HashMap<>();
-        response.put(id, credentialConfiguration);
-        return response;
+    public CredentialConfiguration getResponseModel(CredentialConfiguration credentialConfiguration) {
+        return saveCredentialConfiguration(credentialConfiguration);
     }
 
-    public String buildVct(CredentialConfiguration credentialConfiguration) {
-        if (persistenceLayer.containsKey(credentialConfiguration.vct())) {
-            throw new BadRequestException("Credential configuration already exists");
+    protected CredentialConfiguration saveCredentialConfiguration(CredentialConfiguration credentialConfiguration) {
+        String vct = VCT_PREFIX + credentialConfiguration.vct();
+        if (persistenceLayer.containsKey(vct)) {
+            throw new BadRequestException("Credential configuration already exists for vct=%s".formatted(credentialConfiguration.vct()));
         }
-        updatePersistenceLayer(credentialConfiguration);
-        return VCT_PREFIX + credentialConfiguration.vct() + counter++ + SD_JWT_VC;
+        String credentialConfigurationId = VCT_PREFIX + credentialConfiguration.vct() + SD_JWT_VC;
+        CredentialConfiguration cc = new CredentialConfiguration(
+                credentialConfigurationId,
+                vct,
+                credentialConfiguration.format(),
+                credentialConfiguration.exampleCredentialData(),
+                credentialConfiguration.credentialMetadata()
+        );
+        updatePersistenceLayer(cc);
+        log.info("Generated new credential configuration with id: {}", credentialConfiguration);
+        return cc;
     }
 
     public void updatePersistenceLayer(CredentialConfiguration credentialConfiguration) {
