@@ -9,13 +9,13 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record Claims(
-        @NotEmpty(message = "Claims path is null")
+        @NotEmpty(message = "Claims path is null or empty")
         @JsonProperty("path")
         String path,
         @JsonProperty("mandatory")
         boolean mandatory,
         @Valid
-        @NotEmpty(message = "Claims display is null")
+        @NotEmpty(message = "Claims display is null or empty")
         @JsonProperty("display")
         List<Display> display
 ) {
