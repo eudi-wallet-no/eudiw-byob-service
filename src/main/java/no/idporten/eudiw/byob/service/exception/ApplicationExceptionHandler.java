@@ -32,7 +32,7 @@ public class ApplicationExceptionHandler {
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
         StringBuilder details = new StringBuilder();
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-            details.append("Attribute %s has error= %s/n".formatted(fieldError.getField(), fieldError.getDefaultMessage()));
+            details.append("Attribute %s has error= %s\n".formatted(fieldError.getField(), fieldError.getDefaultMessage()));
         }
 
         String vct = "";
