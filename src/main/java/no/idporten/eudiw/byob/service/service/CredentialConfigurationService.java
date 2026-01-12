@@ -15,8 +15,8 @@ public class CredentialConfigurationService {
 
     private final Map<String, CredentialConfiguration> persistenceLayer = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(CredentialConfigurationService.class);
-    private int counter= 0;
-    private static final String PREFIX = "net.eidas2sandkasse:";
+    private int counter = 0;
+    public static final String VCT_PREFIX = "net.eidas2sandkasse:";
     private static final String SD_JWT_VC = "_sd_jwt_vc";
 
     public CredentialConfigurationService() {
@@ -30,7 +30,7 @@ public class CredentialConfigurationService {
      *
      * @param credentialConfiguration user input that user POSTS in to BYOB in order to "build your own bevis"
      * @return a new HashMap with an id that consists of a set prefix, the VCT given in input,
-     *  a counter and format.
+     * a counter and format.
      */
     public Map<String, CredentialConfiguration> getResponseModel(CredentialConfiguration credentialConfiguration) {
         String id = buildVct(credentialConfiguration);
@@ -43,8 +43,8 @@ public class CredentialConfigurationService {
         if (persistenceLayer.containsKey(credentialConfiguration.vct())) {
             throw new BadRequestException("Credential configuration already exists");
         }
-            updatePersistenceLayer(credentialConfiguration);
-            return PREFIX + credentialConfiguration.vct() + counter++ + SD_JWT_VC;
+        updatePersistenceLayer(credentialConfiguration);
+        return VCT_PREFIX + credentialConfiguration.vct() + counter++ + SD_JWT_VC;
     }
 
     public void updatePersistenceLayer(CredentialConfiguration credentialConfiguration) {
@@ -56,7 +56,11 @@ public class CredentialConfigurationService {
 
     }
 
-    public CredentialConfiguration searchCredentialConfiguration(String id) {
-        return persistenceLayer.get(id);
+    public CredentialConfiguration getCredentialConfiguration(String vct) {
+        return persistenceLayer.get(vct);
+    }
+
+    public CredentialConfiguration searchCredentialConfiguration(String credentialConfigurationId) {
+        return persistenceLayer.values().stream().filter(c -> c.credentialConfigurationId().equals(credentialConfigurationId)).findFirst().orElse(null);
     }
 }

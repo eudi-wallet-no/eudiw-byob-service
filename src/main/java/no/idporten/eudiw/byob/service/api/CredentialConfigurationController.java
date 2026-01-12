@@ -59,17 +59,30 @@ public class CredentialConfigurationController {
     }
 
     @Operation(
-            summary = "Hent en gitt bevistype ut frå id",
-            description = "Hent bevistype ut fra id der id er vct")
+            summary = "Hent en gitt bevistype ut frå vct",
+            description = "")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Bevistype med matchende VCT hentes fra lagring"),
+            @ApiResponse(responseCode = "200", description = "Bevistype med matchende VCT"),
             @ApiResponse(responseCode = "500", description = "Intern feil"),
             @ApiResponse(responseCode = "404", description = "Fant ingen bevis med gitt VCT",
                     content = @Content(examples= @ExampleObject(description = "Ikke funnet", value = ByobServiceAPISwaggerExamples.NOT_FOUND)))
     })
+    @GetMapping(value = "/v1/credential-configurations/{vct}", produces =  MediaType.APPLICATION_JSON_VALUE)
+    public  ResponseEntity<CredentialConfiguration> retrieveCredentialConfiguration(@PathVariable String vct) {
+        return ResponseEntity.ofNullable(service.getCredentialConfiguration(vct));
+    }
 
-    @GetMapping(value = "/v1/credential-configurations/{id}", produces =  MediaType.APPLICATION_JSON_VALUE)
-    public  ResponseEntity<CredentialConfiguration> retrieveSelectedCredentialConfiguration(@PathVariable String id) {
-        return ResponseEntity.ofNullable(service.searchCredentialConfiguration(id));
+    @Operation(
+            summary = "Søk etter bevistype ut frå credentialConfigurationId",
+            description = "")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Bevistype med matchende credentialConfigurationId"),
+            @ApiResponse(responseCode = "500", description = "Intern feil"),
+            @ApiResponse(responseCode = "404", description = "Fant ingen bevis med gitt credentialConfigurationId",
+                    content = @Content(examples= @ExampleObject(description = "Ikke funnet", value = ByobServiceAPISwaggerExamples.NOT_FOUND)))
+    })
+    @GetMapping(value = "/v1/credential-configurations/search", produces =  MediaType.APPLICATION_JSON_VALUE)
+    public  ResponseEntity<CredentialConfiguration> findCredentialConfigurationByCredentialConfigurationId(@RequestParam(name = "credentialConfigurationId") String credentialConfigurationId) {
+        return ResponseEntity.ofNullable(service.searchCredentialConfiguration(credentialConfigurationId));
     }
 }
