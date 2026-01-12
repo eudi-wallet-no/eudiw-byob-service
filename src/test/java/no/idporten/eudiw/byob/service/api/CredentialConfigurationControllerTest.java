@@ -1,7 +1,10 @@
 package no.idporten.eudiw.byob.service.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import no.idporten.eudiw.byob.service.model.*;
+import no.idporten.eudiw.byob.service.model.CredentialConfiguration;
+import no.idporten.eudiw.byob.service.model.CredentialConfigurations;
+import no.idporten.eudiw.byob.service.model.CredentialMetadata;
+import no.idporten.eudiw.byob.service.model.ExampleCredentialData;
 import no.idporten.eudiw.byob.service.service.CredentialConfigurationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,13 +20,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static no.idporten.eudiw.byob.service.service.CredentialConfigurationService.VCT_PREFIX;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("When POST-ing and GETing data to the BYOB")
 @AutoConfigureMockMvc
@@ -58,8 +60,8 @@ class CredentialConfigurationControllerTest {
     void postRequestTest() throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
-        CredentialConfiguration input = mapper.readValue(getRequest("bevisetmitt"), CredentialConfiguration.class);
-        CredentialConfiguration output = mapper.readValue(getResponse("bevisetmitt"), CredentialConfiguration.class);
+        CredentialConfiguration input = mapper.readValue(getPostRequest("bevisetmitt"), CredentialConfiguration.class);
+        CredentialConfiguration output = mapper.readValue(getPostResponse("bevisetmitt"), CredentialConfiguration.class);
         mockMvc.perform(post("/v1/credential-configuration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(input)))
@@ -67,32 +69,32 @@ class CredentialConfigurationControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(output)));
     }
 
-    private String getRequest(String vct) throws Exception {
+    private String getPostRequest(String vct) throws Exception {
 
         return
                 """ 
-                {
-                    "vct": "%s",
-                    "format": "dc+sd-jwt",
-                    %s,
-                    %s
-                }
-                """.formatted(vct, getExampleCredentialMetadata(), getCredentialMetadata());
+                        {
+                            "vct": "%s",
+                            "format": "dc+sd-jwt",
+                            %s,
+                            %s
+                        }
+                        """.formatted(vct, getExampleCredentialMetadata(), getCredentialMetadata());
     }
 
-    private String getResponse(String vctName) throws Exception {
+    private String getPostResponse(String vctName) throws Exception {
         String credentialConfigurationId = "net.eidas2sandkasse:" + vctName + "_sd_jwt_vc";
         String vct = "net.eidas2sandkasse:" + vctName;
         return
                 """ 
-                {
-                    "credential_configuration_id": "%s",
-                    "vct": "%s",
-                    "format": "dc+sd-jwt",
-                    %s,
-                    %s
-                }
-                """.formatted(credentialConfigurationId, vct, getExampleCredentialMetadata(), getCredentialMetadata());
+                        {
+                            "credential_configuration_id": "%s",
+                            "vct": "%s",
+                            "format": "dc+sd-jwt",
+                            %s,
+                            %s
+                        }
+                        """.formatted(credentialConfigurationId, vct, getExampleCredentialMetadata(), getCredentialMetadata());
     }
 
     private String getExampleCredentialMetadata() {
