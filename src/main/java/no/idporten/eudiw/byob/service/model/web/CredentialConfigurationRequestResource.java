@@ -1,4 +1,4 @@
-package no.idporten.eudiw.byob.service.model;
+package no.idporten.eudiw.byob.service.model.web;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,11 +21,11 @@ public record CredentialConfigurationRequestResource(
 
         @Valid
         @JsonProperty("example_credential_data")
-        ExampleCredentialData exampleCredentialData,
+        ExampleCredentialDataRequestResource exampleCredentialData,
 
         @Valid
         @JsonProperty("credential_metadata")
         @NotNull(message = "credential_metadata is null")
-        CredentialMetadata credentialMetadata
+        CredentialMetadataRequestResource credentialMetadata
 ) {
 }

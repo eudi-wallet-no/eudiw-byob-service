@@ -1,7 +1,7 @@
 package no.idporten.eudiw.byob.service.exception;
 
 
-import no.idporten.eudiw.byob.service.model.CredentialConfigurationRequestResource;
+import no.idporten.eudiw.byob.service.model.web.CredentialConfigurationRequestResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
