@@ -45,7 +45,7 @@ public class CredentialConfigurationService {
         String credentialConfigurationId = VCT_PREFIX + credentialConfiguration.vct() + SD_JWT_VC;
         CredentialConfiguration cc = convert(credentialConfiguration, credentialConfigurationId, vct);
         updatePersistenceLayer(cc);
-        log.info("Generated new credential configuration with id: {}", credentialConfiguration);
+        log.info("Generated new credential configuration for vct: {}", cc.vct());
         return cc;
     }
 
