@@ -20,8 +20,9 @@ public class RedisService {
 
     private final Logger log = LoggerFactory.getLogger(RedisService.class);
 
-    public static final String DATA_PREFIX_BYOB_TYPES = "byob-service:credential-configuration-types:"; // Key-data map (vct -> credential-configuration)
-    public static final String KEY_PREFIX_BYOB_ID = "byob-service:credential-types:"; // Key mapping (credential-configuration-id -> vct). Can use to lookup data (credential-configuration by vct) afterwards.
+    public static final String APP_NAME = "byob-service:";
+    public static final String DATA_PREFIX_BYOB_TYPES = APP_NAME + "credential-configuration-types:"; // Key-data map (vct -> credential-configuration)
+    public static final String KEY_PREFIX_BYOB_ID = APP_NAME + "credential-types:"; // Key mapping (credential-configuration-id -> vct). Can use to lookup data (credential-configuration by vct) afterwards.
 
     private final RedisTemplate<String, Object> redisTemplate;
 
