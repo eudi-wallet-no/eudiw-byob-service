@@ -72,7 +72,6 @@ public class RedisService {
         Set<String> keys = getAllDataKeys();
         List<CredentialConfigurationData> all = new ArrayList<>();
         for (String key : keys) {
-            System.out.println("redis key=" + key);
             valueOperations.get(key);
             all.add((CredentialConfigurationData) valueOperations.get(key));
         }
