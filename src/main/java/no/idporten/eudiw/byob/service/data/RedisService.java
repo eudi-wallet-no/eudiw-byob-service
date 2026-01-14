@@ -36,7 +36,7 @@ public class RedisService {
     @PostConstruct
     private void init() {
         valueOperations = redisTemplate.opsForValue();
-        Set<String> allKeys = getAllKeys();
+        Set<String> allKeys = getAllDataKeys();
         log.info("RedisService initialized. Found existing keys with prefix {} in Redis: {}", DATA_PREFIX_BYOB_TYPES, allKeys);
         addMockedCredentialConfigurationsToRedis();
     }
@@ -69,7 +69,7 @@ public class RedisService {
 
     // TODO: Performance improvement: possible to fetch all values without fetching each individually by key?
     public List<CredentialConfigurationData> getAll() {
-        Set<String> keys = getAllKeys();
+        Set<String> keys = getAllDataKeys();
         List<CredentialConfigurationData> all = new ArrayList<>();
         for (String key : keys) {
             System.out.println("redis key=" + key);
@@ -79,7 +79,36 @@ public class RedisService {
         return all;
     }
 
-    private Set<String> getAllKeys() {
+    public void delete(String vct) {
+        CredentialConfigurationData bevisType = getBevisType(vct);
+        String deletedCredentialConfigurationId = (String) valueOperations.getAndDelete(KEY_PREFIX_BYOB_ID + bevisType.credentialConfigurationId());
+        CredentialConfigurationData data = (CredentialConfigurationData) valueOperations.getAndDelete(DATA_PREFIX_BYOB_TYPES + vct);
+        if (deletedCredentialConfigurationId == null || data == null) {
+            log.warn("Attempted to delete BevisType from Redis, but it was not found: vct={}", vct);
+            // TODO: throw exception?
+        } else {
+            log.info("Deleted BevisType from Redis: vct={}, credentialConfigurationId={}", data.vct(), deletedCredentialConfigurationId);
+        }
+    }
+
+
+    public void deleteAll() {
+//        redisTemplate.delete(KEY_PREFIX_BYOB_ID + "*");
+//        redisTemplate.delete(DATA_PREFIX_BYOB_TYPES + "*");
+        Set<String> keys = getAllDataKeys();
+        for (String key : keys) {
+            CredentialConfigurationData data = (CredentialConfigurationData) valueOperations.getAndDelete(key);
+            if(data == null) {
+                log.error("Failed to delete BevisType from Redis for key={}", key);
+                return;
+            }
+            String ccId = (String) valueOperations.getAndDelete(DATA_PREFIX_BYOB_TYPES + data.credentialConfigurationId());
+            log.info("Deleted BevisType from Redis: vct={}, credentialConfigurationId={}", data.vct(), ccId);
+        }
+        log.info("Deleted all BevisType from Redis");
+    }
+
+    private Set<String> getAllDataKeys() {
         return redisTemplate.keys(DATA_PREFIX_BYOB_TYPES + "*");
     }
 

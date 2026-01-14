@@ -2,7 +2,8 @@ spring:
   application:
     environment: junit
 
-#  data:
-#    redis:
-#      host: 127.0.0.1
-#      port: 9262
+  data:
+    redis:
+      host: localhost
+      port: 8850
+      password:
