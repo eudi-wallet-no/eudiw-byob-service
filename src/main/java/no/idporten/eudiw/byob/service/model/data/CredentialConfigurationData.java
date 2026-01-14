@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import no.idporten.eudiw.byob.service.model.CredentialConfiguration;
 
 import java.io.Serializable;
+import java.util.List;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -20,28 +21,28 @@ public record CredentialConfigurationData(
         String format,
 
         @JsonProperty("example_credential_data")
-        ExampleCredentialDataData exampleCredentialData,
+        List<ExampleCredentialDataData> exampleCredentialData,
 
         @JsonProperty("credential_metadata")
         CredentialMetadataData credentialMetadata
 ) implements Serializable {
 
-    public CredentialConfigurationData(CredentialConfiguration other){
+    public CredentialConfigurationData(CredentialConfiguration other) {
         this(
                 other.credentialConfigurationId(),
                 other.vct(),
                 other.format(),
-                new ExampleCredentialDataData(other.exampleCredentialData()),
-             new CredentialMetadataData(other.credentialMetadata())
+                other.exampleCredentialData().stream().map(example -> new ExampleCredentialDataData(example.name(), example.value())).toList(),
+                new CredentialMetadataData(other.credentialMetadata())
         );
     }
 
-    public CredentialConfiguration toCredentialConfiguration(){
+    public CredentialConfiguration toCredentialConfiguration() {
         return new CredentialConfiguration(
                 this.credentialConfigurationId,
                 this.vct,
                 this.format,
-                this.exampleCredentialData().toExampleCredentialData(),
+                this.exampleCredentialData().stream().map(ExampleCredentialDataData::toExampleCredentialData).toList(),
                 this.credentialMetadata.toCredentialMetadata()
         );
     }

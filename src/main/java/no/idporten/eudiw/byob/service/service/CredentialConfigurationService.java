@@ -8,6 +8,7 @@ import no.idporten.eudiw.byob.service.model.CredentialMetadata;
 import no.idporten.eudiw.byob.service.model.ExampleCredentialData;
 import no.idporten.eudiw.byob.service.model.data.CredentialConfigurationData;
 import no.idporten.eudiw.byob.service.model.web.CredentialConfigurationRequestResource;
+import no.idporten.eudiw.byob.service.model.web.ExampleCredentialDataRequestResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class CredentialConfigurationService {
     }
 
     private static CredentialConfiguration convert(CredentialConfigurationRequestResource credentialConfiguration, String credentialConfigurationId, String vct) {
-        ExampleCredentialData exampleCredentialData = credentialConfiguration.exampleCredentialData().toExampleCredentialData();
+        List<ExampleCredentialData> exampleCredentialData = credentialConfiguration.exampleCredentialData().stream().map(ExampleCredentialDataRequestResource::toExampleCredentialData).toList();
         CredentialMetadata credentialMetadata = credentialConfiguration.credentialMetadata().toCredentialMetadata();
         return new CredentialConfiguration(
                 credentialConfigurationId,

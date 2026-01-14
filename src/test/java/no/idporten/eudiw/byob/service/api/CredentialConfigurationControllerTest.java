@@ -113,9 +113,10 @@ class CredentialConfigurationControllerTest {
 
         private String getExampleCredentialMetadata() {
             return """
-                    "example_credential_data": {
-                        "json": "todo: implement me"
-                    }""";
+                    "example_credential_data": [{
+                        "name": "claim1",
+                        "value": "value1"
+                    }]""";
         }
 
         private String getCredentialMetadata() {
@@ -209,7 +210,7 @@ class CredentialConfigurationControllerTest {
     }
 
     private static CredentialConfiguration createCredentialConfiguration(String credentialConfigurationId, String vct) {
-        return new CredentialConfiguration(credentialConfigurationId, vct, "dc+sd-jwt", new ExampleCredentialData("bar"), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
+        return new CredentialConfiguration(credentialConfigurationId, vct, "dc+sd-jwt", List.of(new ExampleCredentialData("bar","val")), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
     }
 
 }
