@@ -3,8 +3,10 @@ package no.idporten.eudiw.byob.service.model.data;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import no.idporten.eudiw.byob.service.model.CredentialConfiguration;
+import no.idporten.eudiw.byob.service.model.ExampleCredentialData;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -32,9 +34,16 @@ public record CredentialConfigurationData(
                 other.credentialConfigurationId(),
                 other.vct(),
                 other.format(),
-                other.exampleCredentialData().stream().map(example -> new ExampleCredentialDataData(example.name(), example.value())).toList(),
+                getExampleCredentialDataData(other.exampleCredentialData()),
                 new CredentialMetadataData(other.credentialMetadata())
         );
+    }
+
+    private static List<ExampleCredentialDataData> getExampleCredentialDataData(List<ExampleCredentialData> exampleCredentialData) {
+        if (exampleCredentialData == null) {
+            return Collections.emptyList();
+        }
+        return exampleCredentialData.stream().map(example -> new ExampleCredentialDataData(example.name(), example.value())).toList();
     }
 
     public CredentialConfiguration toCredentialConfiguration() {
@@ -42,8 +51,15 @@ public record CredentialConfigurationData(
                 this.credentialConfigurationId,
                 this.vct,
                 this.format,
-                this.exampleCredentialData().stream().map(ExampleCredentialDataData::toExampleCredentialData).toList(),
-                this.credentialMetadata.toCredentialMetadata()
+                getExampleCredentialDataData(),
+                this.credentialMetadata == null ? null : this.credentialMetadata.toCredentialMetadata()
         );
+    }
+
+    private List<ExampleCredentialData> getExampleCredentialDataData() {
+        if (this.exampleCredentialData() == null) {
+            return Collections.emptyList();
+        }
+        return this.exampleCredentialData().stream().map(ExampleCredentialDataData::toExampleCredentialData).toList();
     }
 }
