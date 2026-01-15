@@ -52,9 +52,9 @@ class CredentialConfigurationServiceTest {
     }
 
     private static CredentialConfigurationRequestResource createCredentialConfigurationRequestResource(String vct) {
-        DisplayRequestResource bevisNamn = createDisplay("Bevis Name");
-        DisplayRequestResource claimNamn = createDisplay("Claim Name");
-        return new CredentialConfigurationRequestResource(vct, "dc+sd-jwt", null, new CredentialMetadataRequestResource(List.of(bevisNamn), List.of(new ClaimsRequestResource("path", true, List.of(claimNamn)))));
+        DisplayRequestResource bevisName = createDisplay("Bevis Name");
+        DisplayRequestResource claimName = createDisplay("Claim Name");
+        return new CredentialConfigurationRequestResource(vct, "dc+sd-jwt", null, new CredentialMetadataRequestResource(List.of(bevisName), List.of(new ClaimsRequestResource("path", true, List.of(claimName)))));
     }
 
     private static DisplayRequestResource createDisplay(String displayName) {
