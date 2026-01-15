@@ -19,4 +19,4 @@ spring:
       port: 6379
 
 byob-service:
-  token: my-not-so-secret-token
+  api_key: my-not-so-secret-token

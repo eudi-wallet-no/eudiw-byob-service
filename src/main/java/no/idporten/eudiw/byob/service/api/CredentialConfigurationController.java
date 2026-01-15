@@ -68,8 +68,8 @@ public class CredentialConfigurationController {
 
     @Hidden
     @DeleteMapping(path = "/v1/credential-configuration/all")
-    public ResponseEntity<String> deleteAllCredentialConfiguration(@RequestHeader("token") String token){
-        if(token == null || !token.equals(properties.token())) {
+    public ResponseEntity<String> deleteAllCredentialConfiguration(@RequestHeader("X-API-KEY") String apiKey){
+        if(apiKey == null || !apiKey.equals(properties.apiKey())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         service.deleteAll();

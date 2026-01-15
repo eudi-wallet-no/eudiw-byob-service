@@ -265,6 +265,15 @@ class CredentialConfigurationControllerTest {
             verify(redisService).delete(eq(vct));
         }
 
+        @DisplayName("deleteAll should gives 204 when all is found and deleted")
+        @Test
+        public void testDeleteAll() throws Exception {
+            when(redisService.getAll()).thenReturn(List.of(createCredentialConfigurationData("cc-id", "vct_1")));
+            mockMvc.perform(delete("/v1/credential-configuration/all").header("X-API-KEY", "test-api-key"))
+                    .andExpect(status().isNoContent());
+            verify(redisService).deleteAll();
+        }
+
         private static CredentialConfigurationData createCredentialConfigurationData(String credentialConfigurationId, String vct) {
             return new CredentialConfigurationData(credentialConfigurationId, vct, "dc+sd-jwt", List.of(new ExampleCredentialDataData("bar", "val")), new CredentialMetadataData(new ArrayList<>(), new ArrayList<>()));
         }
