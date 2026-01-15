@@ -239,7 +239,7 @@ class CredentialConfigurationControllerTest {
                     .andExpect(jsonPath("$.vct").value(vct));
         }
 
-        @DisplayName("search with credential_configuration_id as request param should gives 404 when the credentialConfigurationId is not found")
+        @DisplayName("search with credential_configuration_id as request param should return 404 when the credentialConfigurationId is not found")
         @Test
         void searchByCredentialConfigurationIdWhenIdDoesNotExistTest() throws Exception {
             mockMvc.perform(get("/v1/credential-configuration/search").param("credentialConfigurationId", "nonexistent"))
@@ -255,7 +255,7 @@ class CredentialConfigurationControllerTest {
     @DisplayName("when calling DELETE to credential-configuration endpoint")
     class TestDelete {
 
-        @DisplayName("delete with vct as request param should gives 204 when vct is found and deleted")
+        @DisplayName("delete with vct as request param should return 204 when vct is found and deleted")
         @Test
         public void testDelete() throws Exception {
             String vct = "my-vct";
@@ -265,7 +265,7 @@ class CredentialConfigurationControllerTest {
             verify(redisService).delete(eq(vct));
         }
 
-        @DisplayName("deleteAll should gives 204 when all is found and deleted")
+        @DisplayName("deleteAll should return 204 when all is found and deleted")
         @Test
         public void testDeleteAll() throws Exception {
             when(redisService.getAll()).thenReturn(List.of(createCredentialConfigurationData("cc-id", "vct_1")));
