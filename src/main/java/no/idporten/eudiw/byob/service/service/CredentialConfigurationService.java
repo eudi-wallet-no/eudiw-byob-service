@@ -1,5 +1,6 @@
 package no.idporten.eudiw.byob.service.service;
 
+import jakarta.validation.Valid;
 import no.idporten.eudiw.byob.service.data.RedisService;
 import no.idporten.eudiw.byob.service.exception.BadRequestException;
 import no.idporten.eudiw.byob.service.model.CredentialConfiguration;
@@ -90,5 +91,9 @@ public class CredentialConfigurationService {
         CredentialConfigurationData data = redisService.getBevisTypeByCredentialConfiguration(credentialConfigurationId);
         if (data == null) { return null;}
         return data.toCredentialConfiguration();
+    }
+
+    public void delete(@Valid String vct) {
+         redisService.delete(vct);
     }
 }

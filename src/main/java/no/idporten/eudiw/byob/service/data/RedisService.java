@@ -1,6 +1,7 @@
 package no.idporten.eudiw.byob.service.data;
 
 import jakarta.annotation.PostConstruct;
+import no.idporten.eudiw.byob.service.exception.BadRequestException;
 import no.idporten.eudiw.byob.service.model.CredentialConfiguration;
 import no.idporten.eudiw.byob.service.model.data.CredentialConfigurationData;
 import no.idporten.eudiw.byob.service.service.MockCredentialConfigurations;
@@ -80,11 +81,15 @@ public class RedisService {
 
     public void delete(String vct) {
         CredentialConfigurationData bevisType = getBevisType(vct);
+        if (bevisType == null) {
+            log.warn("Attempted to delete BevisType from Redis, but it was not found: vct={}", vct);
+            throw new BadRequestException("Attempted to delete BevisType from Redis, but it was not found for vct=%s".formatted(vct));
+        }
         String deletedCredentialConfigurationId = (String) valueOperations.getAndDelete(KEY_PREFIX_BYOB_ID + bevisType.credentialConfigurationId());
         CredentialConfigurationData data = (CredentialConfigurationData) valueOperations.getAndDelete(DATA_PREFIX_BYOB_TYPES + vct);
         if (deletedCredentialConfigurationId == null || data == null) {
             log.warn("Attempted to delete BevisType from Redis, but it was not found: vct={}", vct);
-            // TODO: throw exception?
+            throw new BadRequestException("Attempted to delete BevisType from Redis, but data or credentialConfigurationId was not found for vct=%s".formatted(vct));
         } else {
             log.info("Deleted BevisType from Redis: vct={}, credentialConfigurationId={}", data.vct(), deletedCredentialConfigurationId);
         }
@@ -92,8 +97,6 @@ public class RedisService {
 
 
     public void deleteAll() {
-//        redisTemplate.delete(KEY_PREFIX_BYOB_ID + "*");
-//        redisTemplate.delete(DATA_PREFIX_BYOB_TYPES + "*");
         Set<String> keys = getAllDataKeys();
         for (String key : keys) {
             CredentialConfigurationData data = (CredentialConfigurationData) valueOperations.getAndDelete(key);

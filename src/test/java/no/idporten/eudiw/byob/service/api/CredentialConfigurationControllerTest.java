@@ -7,6 +7,8 @@ import no.idporten.eudiw.byob.service.model.CredentialConfigurations;
 import no.idporten.eudiw.byob.service.model.CredentialMetadata;
 import no.idporten.eudiw.byob.service.model.ExampleCredentialData;
 import no.idporten.eudiw.byob.service.model.data.CredentialConfigurationData;
+import no.idporten.eudiw.byob.service.model.data.CredentialMetadataData;
+import no.idporten.eudiw.byob.service.model.data.ExampleCredentialDataData;
 import no.idporten.eudiw.byob.service.service.CredentialConfigurationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,9 +27,9 @@ import java.util.List;
 
 import static no.idporten.eudiw.byob.service.service.CredentialConfigurationService.VCT_PREFIX;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("Test BYOB CredentialConfigurationController")
@@ -55,7 +57,7 @@ class CredentialConfigurationControllerTest {
     @DisplayName("when calling POST to credential-configuration endpoint")
     class TestCreate {
 
-        @DisplayName("and create credential-configuration with valid input then the response is 200 with created CredentialConfiguration as body")
+        @DisplayName("and create credential-configuration with valid input then the response is 201 with created CredentialConfiguration as body")
         @Test
         void postRequestTest() throws Exception {
 
@@ -65,7 +67,7 @@ class CredentialConfigurationControllerTest {
             mockMvc.perform(post("/v1/credential-configuration")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(input)))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andExpect(content().json(mapper.writeValueAsString(output)));
         }
 
@@ -83,7 +85,7 @@ class CredentialConfigurationControllerTest {
                     .andExpect(jsonPath("$.error").value("validation_error"));
         }
 
-        @DisplayName("and create credential-configuration without exampleData then the response is 200 with CredentialConfiguration as body")
+        @DisplayName("and create credential-configuration without exampleData then the response is 201 with CredentialConfiguration as body")
         @Test
         void postRequestTestWithEmptyExampleData() throws Exception {
 
@@ -93,7 +95,7 @@ class CredentialConfigurationControllerTest {
             mockMvc.perform(post("/v1/credential-configuration")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(input)))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.vct").value(VCT_PREFIX + input.vct()))
                     .andExpect(jsonPath("$.example_credential_data").isEmpty());
         }
@@ -249,4 +251,22 @@ class CredentialConfigurationControllerTest {
         return new CredentialConfiguration(credentialConfigurationId, vct, "dc+sd-jwt", List.of(new ExampleCredentialData("bar", "val")), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
     }
 
+    @Nested
+    @DisplayName("when calling DELETE to credential-configuration endpoint")
+    class TestDelete {
+
+        @DisplayName("delete with vct as request param should gives 204 when vct is found and deleted")
+        @Test
+        public void testDelete() throws Exception {
+            String vct = "my-vct";
+            when(redisService.getBevisType(eq(vct))).thenReturn(createCredentialConfigurationData("cc-id", vct));
+            mockMvc.perform(delete("/v1/credential-configuration").param("vct", vct))
+                    .andExpect(status().isNoContent());
+            verify(redisService).delete(eq(vct));
+        }
+
+        private static CredentialConfigurationData createCredentialConfigurationData(String credentialConfigurationId, String vct) {
+            return new CredentialConfigurationData(credentialConfigurationId, vct, "dc+sd-jwt", List.of(new ExampleCredentialDataData("bar", "val")), new CredentialMetadataData(new ArrayList<>(), new ArrayList<>()));
+        }
+    }
 }

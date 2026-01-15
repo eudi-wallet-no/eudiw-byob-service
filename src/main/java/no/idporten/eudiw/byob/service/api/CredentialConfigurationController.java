@@ -6,14 +6,21 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import no.idporten.eudiw.byob.service.exception.BadRequestException;
 import no.idporten.eudiw.byob.service.model.CredentialConfiguration;
-import no.idporten.eudiw.byob.service.model.web.CredentialConfigurationRequestResource;
 import no.idporten.eudiw.byob.service.model.CredentialConfigurations;
+import no.idporten.eudiw.byob.service.model.web.CredentialConfigurationRequestResource;
 import no.idporten.eudiw.byob.service.service.CredentialConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 public class CredentialConfigurationController {
@@ -38,7 +45,28 @@ public class CredentialConfigurationController {
     })
     @PostMapping(path = "/v1/credential-configuration", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CredentialConfiguration> createCredentialConfiguration(@Valid @RequestBody CredentialConfigurationRequestResource credentialConfig){
-        return ResponseEntity.ok(service.create(credentialConfig));
+        CredentialConfiguration body = service.create(credentialConfig);
+        return ResponseEntity.status(HttpStatus.CREATED).body(body);
+    }
+
+    @Operation(summary = "Slett bevistype fra vct",
+            description = "Slett en bevistype ved å bruke vct (verifiable credential type) som identifikator.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Returner vct som ble slettet",
+                    content = @Content(mediaType = "application/json"
+                    )),
+            @ApiResponse(responseCode = "500", description = "Internal error",
+                    content = @Content(examples= @ExampleObject(description = "Intern feil", value = ByobServiceAPISwaggerExamples.SERVER_ERROR_EXAMPLE)))
+    })
+    @DeleteMapping(path = "/v1/credential-configuration")
+    public ResponseEntity<String> deleteCredentialConfiguration(@NotEmpty @RequestParam(name = "vct") String vct){
+        String decodedVct = decode(vct);
+        service.delete(decodedVct);
+        return ResponseEntity.noContent().build();
+    }
+
+    private String decode(String value) {
+        return URLDecoder.decode(value, StandardCharsets.UTF_8);
     }
 
     @Operation(
@@ -49,7 +77,6 @@ public class CredentialConfigurationController {
             @ApiResponse(responseCode = "500", description = "Internal error",
                     content = @Content(examples= @ExampleObject(description = "Intern feil", value = ByobServiceAPISwaggerExamples.SERVER_ERROR_EXAMPLE)))
     })
-
     @GetMapping(value = "/v1/credential-configurations", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<CredentialConfigurations> retrieveAllCredentialConfigurations() {
         return ResponseEntity.ok(service.getAllEntries());
@@ -66,7 +93,8 @@ public class CredentialConfigurationController {
     })
     @GetMapping(value = "/v1/credential-configuration/{vct}", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<CredentialConfiguration> retrieveCredentialConfiguration(@PathVariable String vct) {
-        return ResponseEntity.ofNullable(service.getCredentialConfiguration(vct));
+        String decodedVct = decode(vct);
+        return ResponseEntity.ofNullable(service.getCredentialConfiguration(decodedVct));
     }
 
     @Operation(
@@ -80,6 +108,7 @@ public class CredentialConfigurationController {
     })
     @GetMapping(value = "/v1/credential-configuration/search", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<CredentialConfiguration> findCredentialConfigurationByCredentialConfigurationId(@RequestParam(name = "credentialConfigurationId") String credentialConfigurationId) {
-        return ResponseEntity.ofNullable(service.searchCredentialConfiguration(credentialConfigurationId));
+        String decodedCCId = decode(credentialConfigurationId);
+        return ResponseEntity.ofNullable(service.searchCredentialConfiguration(decodedCCId));
     }
 }
