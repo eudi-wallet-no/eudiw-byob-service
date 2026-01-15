@@ -46,4 +46,4 @@ digdir:
 
 # byob-service: Bring your own bevis service properties
 byob-service:
-
+    token: ${BYOB_SERVICE_TOKEN}

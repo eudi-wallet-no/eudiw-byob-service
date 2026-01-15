@@ -96,4 +96,8 @@ public class CredentialConfigurationService {
     public void delete(@Valid String vct) {
          redisService.delete(vct);
     }
+
+    public void deleteAll() {
+        redisService.deleteAll();
+    }
 }

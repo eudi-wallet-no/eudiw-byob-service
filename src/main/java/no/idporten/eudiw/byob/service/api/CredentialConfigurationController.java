@@ -1,5 +1,6 @@
 package no.idporten.eudiw.byob.service.api;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -7,7 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import no.idporten.eudiw.byob.service.exception.BadRequestException;
+import no.idporten.eudiw.byob.service.config.ByobServiceProperties;
 import no.idporten.eudiw.byob.service.model.CredentialConfiguration;
 import no.idporten.eudiw.byob.service.model.CredentialConfigurations;
 import no.idporten.eudiw.byob.service.model.web.CredentialConfigurationRequestResource;
@@ -18,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
@@ -26,11 +26,12 @@ import java.nio.charset.StandardCharsets;
 public class CredentialConfigurationController {
 
     CredentialConfigurationService service;
+    ByobServiceProperties properties;
 
     @Autowired
-    public CredentialConfigurationController(CredentialConfigurationService service) {
+    public CredentialConfigurationController(CredentialConfigurationService service, ByobServiceProperties properties) {
+        this.properties = properties;
         this.service = service;
-
     }
 
     @Operation(
@@ -62,6 +63,16 @@ public class CredentialConfigurationController {
     public ResponseEntity<String> deleteCredentialConfiguration(@NotEmpty @RequestParam(name = "vct") String vct){
         String decodedVct = decode(vct);
         service.delete(decodedVct);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Hidden
+    @DeleteMapping(path = "/v1/credential-configuration/all")
+    public ResponseEntity<String> deleteAllCredentialConfiguration(@RequestHeader("token") String token){
+        if(token == null || !token.equals(properties.token())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        service.deleteAll();
         return ResponseEntity.noContent().build();
     }
 
