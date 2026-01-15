@@ -38,7 +38,7 @@ public class CredentialConfigurationController {
             summary = "Lag en ny bevistype",
             description = "Her kan du registrere en ny bevistype for å utforske bevisutstedelse på en enkel og rask måte.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Returner bevistypen som ble laget",
+            @ApiResponse(responseCode = "201", description = "Returner bevistypen som ble laget",
                     content = @Content(mediaType = "application/json"
                     )),
             @ApiResponse(responseCode = "500", description = "Internal error",
@@ -53,7 +53,7 @@ public class CredentialConfigurationController {
     @Operation(summary = "Slett bevistype fra vct",
             description = "Slett en bevistype ved å bruke vct (verifiable credential type) som identifikator.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Returner vct som ble slettet",
+            @ApiResponse(responseCode = "204", description = "Returner vct som ble slettet",
                     content = @Content(mediaType = "application/json"
                     )),
             @ApiResponse(responseCode = "500", description = "Internal error",
