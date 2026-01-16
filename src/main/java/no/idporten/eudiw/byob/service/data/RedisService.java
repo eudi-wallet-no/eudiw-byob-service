@@ -63,7 +63,7 @@ public class RedisService {
         Object oldBevisType = valueOperations.getAndSet(DATA_PREFIX_BYOB_TYPES + bevisType.vct(), bevisType);
         Object oldVct = valueOperations.getAndSet(KEY_PREFIX_BYOB_ID + bevisType.credentialConfigurationId(), bevisType.vct());
         if (oldBevisType == null || oldVct == null) {
-            log.error("Tried to updated bevistype in Redis, but did not exist: vct={}, so is created in stead. This should never happen.", bevisType.vct());
+            log.error("Tried to update bevistype in Redis, but did not exist: vct={}, so is created instead. This should never happen.", bevisType.vct());
         }
         log.info("Updated BevisType to Redis: vct={}", bevisType.vct());
     }
