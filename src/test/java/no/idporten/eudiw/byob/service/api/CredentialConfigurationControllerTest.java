@@ -166,7 +166,7 @@ class CredentialConfigurationControllerTest {
                 verify(redisService, never()).updateBevisType(any(CredentialConfigurationData.class));
             }
 
-            @DisplayName("and update credential-configuration with valid input then the response is 200 with updated CredentialConfiguration as body")
+            @DisplayName("and update credential-configuration that does not exist then the response is 400 with invalid_request error body")
             @Test
             void putUpdateBevisTypeWhenNotExists() throws Exception {
 
