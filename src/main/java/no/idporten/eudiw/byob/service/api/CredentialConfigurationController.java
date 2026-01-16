@@ -19,9 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-
 @RestController
 public class CredentialConfigurationController {
 
@@ -61,8 +58,7 @@ public class CredentialConfigurationController {
     })
     @DeleteMapping(path = "/v1/credential-configuration")
     public ResponseEntity<String> deleteCredentialConfiguration(@NotEmpty @RequestParam(name = "vct") String vct){
-        String decodedVct = decode(vct);
-        service.delete(decodedVct);
+        service.delete(vct);
         return ResponseEntity.noContent().build();
     }
 
@@ -74,10 +70,6 @@ public class CredentialConfigurationController {
         }
         service.deleteAll();
         return ResponseEntity.noContent().build();
-    }
-
-    private String decode(String value) {
-        return URLDecoder.decode(value, StandardCharsets.UTF_8);
     }
 
     @Operation(
@@ -104,8 +96,7 @@ public class CredentialConfigurationController {
     })
     @GetMapping(value = "/v1/credential-configuration/{vct}", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<CredentialConfiguration> retrieveCredentialConfiguration(@PathVariable String vct) {
-        String decodedVct = decode(vct);
-        return ResponseEntity.ofNullable(service.getCredentialConfiguration(decodedVct));
+        return ResponseEntity.ofNullable(service.getCredentialConfiguration(vct));
     }
 
     @Operation(
@@ -119,7 +110,6 @@ public class CredentialConfigurationController {
     })
     @GetMapping(value = "/v1/credential-configuration/search", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<CredentialConfiguration> findCredentialConfigurationByCredentialConfigurationId(@RequestParam(name = "credentialConfigurationId") String credentialConfigurationId) {
-        String decodedCCId = decode(credentialConfigurationId);
-        return ResponseEntity.ofNullable(service.searchCredentialConfiguration(decodedCCId));
+        return ResponseEntity.ofNullable(service.searchCredentialConfiguration(credentialConfigurationId));
     }
 }
