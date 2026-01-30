@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Size;
 import no.idporten.eudiw.byob.service.model.Claims;
 import no.idporten.eudiw.byob.service.model.CredentialMetadata;
 
-import java.util.Collections;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -25,9 +24,12 @@ public record CredentialMetadataRequestResource(
         List<@NotNull(message = "CredentialMetadata claims is null") ClaimsRequestResource> claims
 ) {
     public CredentialMetadata toCredentialMetadata() {
-        List<no.idporten.eudiw.byob.service.model.Display> displays = this.display == null ? Collections.emptyList() : this.display.stream().map(DisplayRequestResource::toDisplay).toList();
+        List<no.idporten.eudiw.byob.service.model.Display> displays =
+            this.display == null
+                ? null
+                : this.display.stream().map(DisplayRequestResource::toDisplay).toList();
 
-        List<Claims> claims = this.claims == null ? Collections.emptyList() : this.claims.stream().map(ClaimsRequestResource::toClaims).toList();
+        List<Claims> claims = this.claims.stream().map(ClaimsRequestResource::toClaims).toList();
 
         return new CredentialMetadata(
                 displays,
