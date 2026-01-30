@@ -11,11 +11,13 @@ import jakarta.validation.constraints.Pattern;
 public record CredentialConfigurationRequestResource(
 
         @JsonProperty("vct")
+        @NotNull(message = "vct must not be null")
         @Pattern(regexp = "^[a-z0-9_:.]{3,155}$",
                 message = "vct must be lowercase letters/numbers, underscores or colons, length 3-155")
         String vct,
 
         @JsonProperty("format")
+        @NotNull(message = "Format must not be null")
         @Pattern(regexp = "dc\\+sd-jwt", message = "Format must be dc+sd-jwt")
         String format,
 
