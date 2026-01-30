@@ -3,7 +3,9 @@ package no.idporten.eudiw.byob.service.model.web;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import no.idporten.eudiw.byob.service.model.Claims;
 
 import java.util.Collections;
@@ -11,7 +13,7 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record ClaimsRequestResource(
-        @NotEmpty(message = "Claims path is null or empty")
+        @NotBlank(message = "Claims path is null or blank")
         @JsonProperty("path")
         String path,
         @JsonProperty("type")
@@ -21,9 +23,9 @@ public record ClaimsRequestResource(
         @JsonProperty("mandatory")
         boolean mandatory,
         @Valid
-        @NotEmpty(message = "Claims display is null or empty")
+        @Size(min = 1, message = "Claims display list is non-null and empty")
         @JsonProperty("display")
-        List<DisplayRequestResource> display
+        List<@NotNull(message = "Claims display is null") DisplayRequestResource> display
 ) {
 
     public Claims toClaims() {
