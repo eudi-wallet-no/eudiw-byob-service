@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import no.idporten.eudiw.byob.service.model.Claims;
 
+import java.util.Collections;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -33,9 +34,7 @@ public record ClaimsRequestResource(
                 this.type,
                 this.mimeType,
                 this.mandatory,
-                this.display == null
-                    ? null
-                    : this.display.stream().map(DisplayRequestResource::toDisplay).toList()
+                this.display == null ? Collections.emptyList() : this.display.stream().map(DisplayRequestResource::toDisplay).toList()
         );
     }
 }
