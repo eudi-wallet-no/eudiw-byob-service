@@ -7,6 +7,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExampleCredentialDataRequestResource extends HashMap<@NotEmpty(message = "Claim name must hava a value") String, Serializable> {
+public class ExampleCredentialDataRequestResource extends HashMap<@NotEmpty(message = "Claim name must have a value") String, Serializable> {
 
 }
