@@ -14,8 +14,8 @@ public record CredentialConfigurationData(
         @JsonProperty("credential_configuration_id")
         String credentialConfigurationId,
 
-        @JsonProperty("vct")
-        String vct,
+        @JsonProperty("credential_type")
+        String credentialType,
 
         @JsonProperty("format")
         String format,
@@ -33,7 +33,7 @@ public record CredentialConfigurationData(
     public CredentialConfigurationData(CredentialConfiguration other) {
         this(
                 other.credentialConfigurationId(),
-                other.vct(),
+                other.credentialType(),
                 other.format(),
                 other.scope(),
                 getExampleCredentialDataData(other.exampleCredentialData()),
@@ -51,7 +51,7 @@ public record CredentialConfigurationData(
     public CredentialConfiguration toCredentialConfiguration() {
         return new CredentialConfiguration(
                 this.credentialConfigurationId,
-                this.vct,
+                this.credentialType,
                 this.format,
                 this.scope,
                 getExampleCredentialDataData(),

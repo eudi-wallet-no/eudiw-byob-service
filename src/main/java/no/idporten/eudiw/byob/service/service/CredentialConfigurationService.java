@@ -22,7 +22,7 @@ public class CredentialConfigurationService {
 
     private static final Logger log = LoggerFactory.getLogger(CredentialConfigurationService.class);
 
-    public static final String VCT_PREFIX = "net.eidas2sandkasse:";
+    public static final String CREDENTIAL_TYPE_PREFIX = "net.eidas2sandkasse:";
     private static final String SD_JWT_VC = "_sd_jwt_vc";
 
     private final RedisService redisService;
@@ -33,34 +33,34 @@ public class CredentialConfigurationService {
     }
 
     /**
-     * Takes in user input, sends input to check if the VCT is already registered, and if
+     * Takes in user input, sends input to check if the credential type is already registered, and if
      * not already registered, it gives back a generated id which is not used for anything
      * as well as the credentialConfiguration.
      *
      * @param credentialConfiguration user input that user POSTS in to BYOB in order to "build your own bevis"
-     * @return a new CredentialConfiguration with an id that consists of a set prefix, the VCT given in input plus format.
+     * @return a new CredentialConfiguration with an id that consists of a set prefix, the credential type given in input plus format.
      */
     public CredentialConfiguration create(CredentialConfigurationRequestResource credentialConfiguration) {
-        String vct = credentialConfiguration.vct();
-        if (!credentialConfiguration.vct().startsWith(VCT_PREFIX)) {
-            vct = VCT_PREFIX + vct;
+        String credentialType = credentialConfiguration.credentialType();
+        if (!credentialConfiguration.credentialType().startsWith(CREDENTIAL_TYPE_PREFIX)) {
+            credentialType = CREDENTIAL_TYPE_PREFIX + credentialType;
         }
-        if (redisService.getBevisType(vct) != null) {
-            throw new BadRequestException("Credential-configuration already exists for vct=%s".formatted(credentialConfiguration.vct()));
+        if (redisService.getBevisType(credentialType) != null) {
+            throw new BadRequestException("Credential-configuration already exists for credentialType=%s".formatted(credentialConfiguration.credentialType()));
         }
-        String credentialConfigurationId = VCT_PREFIX + credentialConfiguration.vct() + SD_JWT_VC;
-        CredentialConfiguration cc = convert(credentialConfiguration, credentialConfigurationId, vct);
+        String credentialConfigurationId = CREDENTIAL_TYPE_PREFIX + credentialConfiguration.credentialType() + SD_JWT_VC;
+        CredentialConfiguration cc = convert(credentialConfiguration, credentialConfigurationId, credentialType);
         redisService.addBevisType(new CredentialConfigurationData(cc));
-        log.info("Generated new credential-configuration for vct: {}", cc.vct());
+        log.info("Generated new credential-configuration for credentialType: {}", cc.credentialType());
         return cc;
     }
 
-    private static CredentialConfiguration convert(CredentialConfigurationRequestResource credentialConfiguration, String credentialConfigurationId, String vct) {
+    private static CredentialConfiguration convert(CredentialConfigurationRequestResource credentialConfiguration, String credentialConfigurationId, String credentialType) {
         ExampleCredentialData exampleCredentialData = convertExampleData(credentialConfiguration.exampleCredentialData());
         CredentialMetadata credentialMetadata = credentialConfiguration.credentialMetadata().toCredentialMetadata();
         return new CredentialConfiguration(
                 credentialConfigurationId,
-                vct,
+                credentialType,
                 credentialConfiguration.format(),
                 credentialConfiguration.scope(),
                 exampleCredentialData,
@@ -81,8 +81,8 @@ public class CredentialConfigurationService {
         return new CredentialConfigurations(list);
     }
 
-    public CredentialConfiguration getCredentialConfiguration(String vct) {
-        CredentialConfigurationData data = redisService.getBevisType(vct);
+    public CredentialConfiguration getCredentialConfiguration(String credentialType) {
+        CredentialConfigurationData data = redisService.getBevisType(credentialType);
         if (data == null) { return null;}
         return data.toCredentialConfiguration();
     }
@@ -93,8 +93,8 @@ public class CredentialConfigurationService {
         return data.toCredentialConfiguration();
     }
 
-    public void delete(String vct) {
-         redisService.delete(vct);
+    public void delete(String credentialType) {
+         redisService.delete(credentialType);
     }
 
     public void deleteAll() {
@@ -102,14 +102,14 @@ public class CredentialConfigurationService {
     }
 
     public CredentialConfiguration update(CredentialConfigurationRequestResource credentialConfiguration) {
-        String vct = credentialConfiguration.vct();
-        CredentialConfigurationData oldBevisType = redisService.getBevisType(vct);
+        String credentialType = credentialConfiguration.credentialType();
+        CredentialConfigurationData oldBevisType = redisService.getBevisType(credentialType);
         if (oldBevisType == null) {
-            throw new BadRequestException("Credential-configuration not created for vct=%s. Create bevisType before update.".formatted(credentialConfiguration.vct()));
+            throw new BadRequestException("Credential-configuration not created for credentialType=%s. Create bevisType before update.".formatted(credentialConfiguration.credentialType()));
         }
-        CredentialConfiguration cc = convert(credentialConfiguration, oldBevisType.credentialConfigurationId(), vct);
+        CredentialConfiguration cc = convert(credentialConfiguration, oldBevisType.credentialConfigurationId(), credentialType);
         redisService.updateBevisType(new CredentialConfigurationData(cc));
-        log.info("Updated credential-configuration for vct: {}", cc.vct());
+        log.info("Updated credential-configuration for credentialType: {}", cc.credentialType());
         return cc;
     }
 }

@@ -10,10 +10,10 @@ import jakarta.validation.constraints.Pattern;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record CredentialConfigurationRequestResource(
 
-        @JsonProperty("vct")
+        @JsonProperty("credential_type")
         @Pattern(regexp = "^[a-z0-9_:.]{3,155}$",
-                message = "vct must be lowercase letters/numbers, underscores or colons, length 3-155")
-        String vct,
+                message = "Credential type must be lowercase letters/numbers, underscores or colons, length 3-155")
+        String credentialType,
 
         @JsonProperty("format")
         @Pattern(regexp = "dc\\+sd-jwt|mso_mdoc", message = "Format must be dc+sd-jwt or mso_mdoc")
