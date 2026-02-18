@@ -20,6 +20,9 @@ public record CredentialConfigurationData(
         @JsonProperty("format")
         String format,
 
+        @JsonProperty("scope")
+        String scope,
+
         @JsonProperty("example_credential_data")
         ExampleCredentialDataData exampleCredentialData,
 
@@ -32,6 +35,7 @@ public record CredentialConfigurationData(
                 other.credentialConfigurationId(),
                 other.vct(),
                 other.format(),
+                other.scope(),
                 getExampleCredentialDataData(other.exampleCredentialData()),
                 new CredentialMetadataData(other.credentialMetadata())
         );
@@ -49,6 +53,7 @@ public record CredentialConfigurationData(
                 this.credentialConfigurationId,
                 this.vct,
                 this.format,
+                this.scope,
                 getExampleCredentialDataData(),
                 this.credentialMetadata == null ? null : this.credentialMetadata.toCredentialMetadata()
         );

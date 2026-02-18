@@ -62,6 +62,7 @@ public class CredentialConfigurationService {
                 credentialConfigurationId,
                 vct,
                 credentialConfiguration.format(),
+                credentialConfiguration.scope(),
                 exampleCredentialData,
                 credentialMetadata
         );

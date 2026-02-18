@@ -19,6 +19,9 @@ public record CredentialConfiguration(
         @JsonProperty("format")
         String format,
 
+        @JsonProperty("scope")
+        String scope,
+
         @JsonProperty("example_credential_data")
         ExampleCredentialData exampleCredentialData,
 

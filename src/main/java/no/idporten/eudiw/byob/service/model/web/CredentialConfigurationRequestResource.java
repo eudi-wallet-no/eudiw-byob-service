@@ -16,8 +16,12 @@ public record CredentialConfigurationRequestResource(
         String vct,
 
         @JsonProperty("format")
-        @Pattern(regexp = "dc\\+sd-jwt", message = "Format must be dc+sd-jwt")
+        @Pattern(regexp = "dc\\+sd-jwt|mso_mdoc", message = "Format must be dc+sd-jwt or mso_mdoc")
         String format,
+
+        @JsonProperty("scope")
+        // TODO regex
+        String scope,
 
         @Valid
         @JsonProperty("example_credential_data")

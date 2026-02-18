@@ -34,7 +34,7 @@ class RedisServiceTest {
     }
 
     private static CredentialConfigurationData createCredentialConfigurationData(String vct) {
-        return new CredentialConfigurationData("test-vct-cred-id", vct, "dc+sd-jwt", new ExampleCredentialDataData(Map.of("attr1","mine")), new CredentialMetadataData(List.of(), List.of()));
+        return new CredentialConfigurationData("test-vct-cred-id", vct, "dc+sd-jwt", "eudiw:foo", new ExampleCredentialDataData(Map.of("attr1","mine")), new CredentialMetadataData(List.of(), List.of()));
     }
 
     @Test

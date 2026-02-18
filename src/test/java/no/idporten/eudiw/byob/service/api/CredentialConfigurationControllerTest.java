@@ -305,7 +305,7 @@ class CredentialConfigurationControllerTest {
     }
 
     private static CredentialConfiguration createCredentialConfiguration(String credentialConfigurationId, String vct) {
-        return new CredentialConfiguration(credentialConfigurationId, vct, "dc+sd-jwt", new ExampleCredentialData(Map.of("bar", "val")), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
+        return new CredentialConfiguration(credentialConfigurationId, vct, "dc+sd-jwt", "eudiw:foo", new ExampleCredentialData(Map.of("bar", "val")), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
     }
 
     @Nested
@@ -335,6 +335,6 @@ class CredentialConfigurationControllerTest {
     }
 
     private static CredentialConfigurationData createCredentialConfigurationData(String credentialConfigurationId, String vct) {
-        return new CredentialConfigurationData(credentialConfigurationId, vct, "dc+sd-jwt", new ExampleCredentialDataData(Map.of("bar", "val")), new CredentialMetadataData(new ArrayList<>(), new ArrayList<>()));
+        return new CredentialConfigurationData(credentialConfigurationId, vct, "dc+sd-jwt", "eudiw:foo", new ExampleCredentialDataData(Map.of("bar", "val")), new CredentialMetadataData(new ArrayList<>(), new ArrayList<>()));
     }
 }
