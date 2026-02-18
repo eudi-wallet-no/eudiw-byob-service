@@ -20,7 +20,7 @@ public record CredentialConfigurationRequestResource(
         String format,
 
         @JsonProperty("scope")
-        // TODO regex
+        @Pattern(regexp = "^[a-zæøå][a-zæøå0-9+\\-.]*:([a-zæøå0-9]+/?)+(:[a-zæøå0-9]+)*[a-zæøå0-9]+(\\.[a-zæøå0-9]+)*$", message = "Scope must be on format prefix:sub_scope") // fra https://github.com/felleslosninger/kut-selvbetjening-api/blob/main/src/main/java/no/digdir/kundetjenester/selvbetjening/api/scope/ScopeValidator.java
         String scope,
 
         @Valid
