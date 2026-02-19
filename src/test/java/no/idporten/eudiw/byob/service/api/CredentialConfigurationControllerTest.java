@@ -182,6 +182,7 @@ class CredentialConfigurationControllerTest {
                             {
                                 "credential_type": "%s",
                                 "format": "dc+sd-jwt",
+                                "scope": "eudiw:junit",
                                 %s,
                                 %s
                             }
@@ -195,6 +196,7 @@ class CredentialConfigurationControllerTest {
                                 "credential_configuration_id": "%s",
                                 "credential_type": "%s",
                                 "format": "dc+sd-jwt",
+                                "scope": "eudiw:junit",
                                 %s,
                                 %s
                             }
