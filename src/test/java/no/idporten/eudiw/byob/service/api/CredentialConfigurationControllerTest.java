@@ -304,15 +304,15 @@ class CredentialConfigurationControllerTest {
         }
     }
 
-    private static CredentialConfiguration createCredentialConfiguration(String credentialConfigurationId, String vct) {
-        return new CredentialConfiguration(credentialConfigurationId, vct, "dc+sd-jwt", "eudiw:foo", new ExampleCredentialData(Map.of("bar", "val")), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
+    private static CredentialConfiguration createCredentialConfiguration(String credentialConfigurationId, String credentialType) {
+        return new CredentialConfiguration(credentialConfigurationId, credentialType, "dc+sd-jwt", "eudiw:foo", new ExampleCredentialData(Map.of("bar", "val")), new CredentialMetadata(new ArrayList<>(), new ArrayList<>()));
     }
 
     @Nested
     @DisplayName("when calling DELETE to credential-configuration endpoint")
     class TestDelete {
 
-        @DisplayName("delete with credential_type as request param should return 204 when vct is found and deleted")
+        @DisplayName("delete with credential_type as request param should return 204 when credential type is found and deleted")
         @Test
         public void testDelete() throws Exception {
             String credentialType = "my-vct";
@@ -334,7 +334,7 @@ class CredentialConfigurationControllerTest {
 
     }
 
-    private static CredentialConfigurationData createCredentialConfigurationData(String credentialConfigurationId, String vct) {
-        return new CredentialConfigurationData(credentialConfigurationId, vct, "dc+sd-jwt", "eudiw:foo", new ExampleCredentialDataData(Map.of("bar", "val")), new CredentialMetadataData(new ArrayList<>(), new ArrayList<>()));
+    private static CredentialConfigurationData createCredentialConfigurationData(String credentialConfigurationId, String credentialType) {
+        return new CredentialConfigurationData(credentialConfigurationId, credentialType, "dc+sd-jwt", "eudiw:foo", new ExampleCredentialDataData(Map.of("bar", "val")), new CredentialMetadataData(new ArrayList<>(), new ArrayList<>()));
     }
 }
