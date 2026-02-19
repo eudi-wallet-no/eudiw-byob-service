@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static no.idporten.eudiw.byob.service.service.CredentialConfigurationService.CREDENTIAL_TYPE_PREFIX;
+import static no.idporten.eudiw.byob.service.service.CredentialConfigurationService.DYNAMIC_CREDENTIAL_TYPE_PREFIX;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -100,7 +100,7 @@ class CredentialConfigurationControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(input)))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.credential_type").value(CREDENTIAL_TYPE_PREFIX + input.credentialType()))
+                    .andExpect(jsonPath("$.credential_type").value(DYNAMIC_CREDENTIAL_TYPE_PREFIX + input.credentialType()))
                     .andExpect(jsonPath("$.example_credential_data").isEmpty());
         }
 
@@ -269,7 +269,7 @@ class CredentialConfigurationControllerTest {
         @Test
         void getByIdWhenIdDoesExistTest() throws Exception {
             String credentialType = "example_sd-jwt";
-            String credentialConfigurationId = CREDENTIAL_TYPE_PREFIX + credentialType;
+            String credentialConfigurationId = DYNAMIC_CREDENTIAL_TYPE_PREFIX + credentialType;
             when(service.getCredentialConfiguration(eq(credentialType))).thenReturn(createCredentialConfiguration(credentialConfigurationId, credentialType));
             mockMvc.perform(get("/v1/credential-configuration/{id}", credentialType))
                     .andExpect(status().isOk())
@@ -288,7 +288,7 @@ class CredentialConfigurationControllerTest {
         @Test
         void searchByCredentialConfigurationIdWhenIdDoesExistTest() throws Exception {
             String credentialType = "example_sd-jwt";
-            String credentialConfigurationId = CREDENTIAL_TYPE_PREFIX + credentialType;
+            String credentialConfigurationId = DYNAMIC_CREDENTIAL_TYPE_PREFIX + credentialType;
             when(service.searchCredentialConfiguration(eq(credentialConfigurationId))).thenReturn(createCredentialConfiguration(credentialConfigurationId, credentialType));
             mockMvc.perform(get("/v1/credential-configuration/search").param("credentialConfigurationId", credentialConfigurationId))
                     .andExpect(status().isOk())

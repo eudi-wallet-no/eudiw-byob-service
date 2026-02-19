@@ -22,7 +22,7 @@ public class CredentialConfigurationService {
 
     private static final Logger log = LoggerFactory.getLogger(CredentialConfigurationService.class);
 
-    public static final String CREDENTIAL_TYPE_PREFIX = "net.eidas2sandkasse:";
+    public static final String DYNAMIC_CREDENTIAL_TYPE_PREFIX = "net.eidas2sandkasse:";
     private static final String SD_JWT_VC_SUFFIX = "_sd_jwt_vc";
     private static final String MSO_MDOC_SUFFIX = "_mso_mdoc";
 
@@ -43,13 +43,13 @@ public class CredentialConfigurationService {
      */
     public CredentialConfiguration create(CredentialConfigurationRequestResource credentialConfiguration) {
         String credentialType = credentialConfiguration.credentialType();
-        if (!credentialConfiguration.credentialType().startsWith(CREDENTIAL_TYPE_PREFIX)) {
-            credentialType = CREDENTIAL_TYPE_PREFIX + credentialType;
+        if (!credentialConfiguration.credentialType().startsWith(DYNAMIC_CREDENTIAL_TYPE_PREFIX)) {
+            credentialType = DYNAMIC_CREDENTIAL_TYPE_PREFIX + credentialType;
         }
         if (redisService.getBevisType(credentialType) != null) {
             throw new BadRequestException("Credential-configuration already exists for credentialType=%s".formatted(credentialConfiguration.credentialType()));
         }
-        String credentialConfigurationId = CREDENTIAL_TYPE_PREFIX + credentialConfiguration.credentialType() + ("dc+sd-jwt".equals(credentialConfiguration.format()) ?  SD_JWT_VC_SUFFIX : MSO_MDOC_SUFFIX);
+        String credentialConfigurationId = DYNAMIC_CREDENTIAL_TYPE_PREFIX + credentialConfiguration.credentialType() + ("dc+sd-jwt".equals(credentialConfiguration.format()) ?  SD_JWT_VC_SUFFIX : MSO_MDOC_SUFFIX);
         CredentialConfiguration cc = convert(credentialConfiguration, credentialConfigurationId, credentialType);
         redisService.addBevisType(new CredentialConfigurationData(cc));
         log.info("Generated new credential-configuration for credentialType: {}", cc.credentialType());

@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static no.idporten.eudiw.byob.service.service.CredentialConfigurationService.CREDENTIAL_TYPE_PREFIX;
+import static no.idporten.eudiw.byob.service.service.CredentialConfigurationService.DYNAMIC_CREDENTIAL_TYPE_PREFIX;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -40,9 +40,9 @@ class CredentialConfigurationServiceTest {
         CredentialConfigurationRequestResource credentialConfigurationRequestResource = createCredentialConfigurationRequestResource("vct-example");
         CredentialConfiguration credentialConfiguration = credentialConfigurationService.create(credentialConfigurationRequestResource);
         assertAll(
-                () -> assertEquals(CREDENTIAL_TYPE_PREFIX + credentialConfigurationRequestResource.credentialType(), credentialConfiguration.credentialType()),
+                () -> assertEquals(DYNAMIC_CREDENTIAL_TYPE_PREFIX + credentialConfigurationRequestResource.credentialType(), credentialConfiguration.credentialType()),
                 () -> assertNotNull(credentialConfiguration.credentialConfigurationId()),
-                () -> assertTrue(credentialConfiguration.credentialConfigurationId().startsWith(CREDENTIAL_TYPE_PREFIX)),
+                () -> assertTrue(credentialConfiguration.credentialConfigurationId().startsWith(DYNAMIC_CREDENTIAL_TYPE_PREFIX)),
                 () -> assertNotNull(credentialConfiguration.credentialMetadata()),
                 () -> assertNotNull(credentialConfiguration.credentialMetadata().display()),
                 () -> assertFalse(credentialConfiguration.credentialMetadata().display().isEmpty()),
