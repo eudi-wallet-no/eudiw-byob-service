@@ -79,12 +79,6 @@ public class CredentialConfigurationService {
         return new ExampleCredentialData(exampleCredentialData);
     }
 
-    public CredentialConfigurations getAllEntries() {
-        List<CredentialConfigurationData> all = redisService.getAll();
-        List<CredentialConfiguration> list = all.stream().map(CredentialConfigurationData::toCredentialConfiguration).toList();
-        return new CredentialConfigurations(list);
-    }
-
     public CredentialConfigurations getAllEntries(CredentialConfigurationContext context) {
         List<CredentialConfigurationData> all = redisService.getAll();
         List<CredentialConfiguration> list = all.stream()

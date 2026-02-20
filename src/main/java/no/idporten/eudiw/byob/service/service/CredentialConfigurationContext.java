@@ -1,5 +1,7 @@
 package no.idporten.eudiw.byob.service.service;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 /**
  * Context for filtering credential configurations based on access level and allowed prefix.
  *
@@ -20,15 +22,21 @@ public record CredentialConfigurationContext(boolean accessAll, String allowedPr
     /**
      * Context for public endpoints when editing.  Access only public credential types, do anything with these.
      */
-    public static CredentialConfigurationContext forPublicEdit() {
+    public static CredentialConfigurationContext forPublic() {
         return new CredentialConfigurationContext(false, PUBLIC_CREDENTIAL_TYPE_PREFIX);
     }
 
     /**
-     * Context for public endpoints when reading.  Use read only as this will access everything!
+     * Create a context from the request.
+     *
+     * All operations in the admin API gets admin.
+     * All operations in the public API gets public.
      */
-    public static CredentialConfigurationContext forPublicRead() {
-        return new CredentialConfigurationContext(true, "");
+    public static CredentialConfigurationContext fromRequest(HttpServletRequest request) {
+        if (request.getRequestURI().startsWith("/v1/admin")) {
+            return forAdmin();
+        }
+        return forPublic();
     }
 
     /**

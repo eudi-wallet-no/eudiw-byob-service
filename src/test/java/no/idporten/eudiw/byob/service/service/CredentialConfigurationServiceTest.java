@@ -39,7 +39,7 @@ class CredentialConfigurationServiceTest {
     @Test
     void create() {
         CredentialConfigurationRequestResource credentialConfigurationRequestResource = createCredentialConfigurationRequestResource("vct-example");
-        CredentialConfiguration credentialConfiguration = credentialConfigurationService.create(credentialConfigurationRequestResource, CredentialConfigurationContext.forPublicEdit());
+        CredentialConfiguration credentialConfiguration = credentialConfigurationService.create(credentialConfigurationRequestResource, CredentialConfigurationContext.forPublic());
         assertAll(
                 () -> assertEquals(PUBLIC_CREDENTIAL_TYPE_PREFIX + credentialConfigurationRequestResource.credentialType(), credentialConfiguration.credentialType()),
                 () -> assertNotNull(credentialConfiguration.credentialConfigurationId()),
@@ -65,7 +65,7 @@ class CredentialConfigurationServiceTest {
     @Test
     void getAllEntriesWhenNothingInRedisReturnsEmpty() {
 
-        CredentialConfigurations all = credentialConfigurationService.getAllEntries();
+        CredentialConfigurations all = credentialConfigurationService.getAllEntries(CredentialConfigurationContext.forAdmin());
         assertAll(
                 () -> assertNotNull(all),
                 () -> assertNotNull(all.credentialConfigurations()),
@@ -81,7 +81,7 @@ class CredentialConfigurationServiceTest {
                 getCredentialConfigurationData("cc-id-2", "vct-2")
         );
         when(redisService.getAll()).thenReturn(credentialConfigurationData);
-        CredentialConfigurations all = credentialConfigurationService.getAllEntries();
+        CredentialConfigurations all = credentialConfigurationService.getAllEntries(CredentialConfigurationContext.forAdmin());
         assertAll(
                 () -> assertNotNull(all),
                 () -> assertNotNull(all.credentialConfigurations()),
@@ -95,7 +95,7 @@ class CredentialConfigurationServiceTest {
         String credentialType = "net.eidas2sandkasse:some-vct";
         when(redisService.getBevisType(eq(credentialType)))
                 .thenReturn(getCredentialConfigurationData("net.eidas2sandkasse:some-cc-id_mso_mdoc", credentialType));
-        CredentialConfiguration credentialConfiguration = credentialConfigurationService.getCredentialConfiguration(credentialType, CredentialConfigurationContext.forPublicEdit());
+        CredentialConfiguration credentialConfiguration = credentialConfigurationService.getCredentialConfiguration(credentialType, CredentialConfigurationContext.forPublic());
         assertAll(
                 () -> assertNotNull(credentialConfiguration),
                 () -> assertEquals(credentialType, credentialConfiguration.credentialType()),

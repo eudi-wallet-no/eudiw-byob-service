@@ -266,18 +266,17 @@ class CredentialConfigurationControllerTest {
     }
 
     @Nested
-    @DisplayName("when calling GET to credential-configurations/edit endpoint")
-    class TestGetAllForEdit {
+    @DisplayName("when calling GET to credential-configurations public endpoint")
+    class TestGetAllForPublicEdit {
 
-        @DisplayName("to get all credential-configurations for edit then return all editable registered entries with response 200")
+        @DisplayName("to get all credential-configurations for public then return all registered entries that can be edited by all with response 200")
         @Test
         void getAllRequestTest() throws Exception {
-            ObjectMapper mapper = new ObjectMapper();
             CredentialConfigurationData input1 = new CredentialConfigurationData(createCredentialConfiguration("net.eidas2sandkasse:example1_sd-jwt", "net.eidas2sandkasse:example1"));
             CredentialConfigurationData input2 = new CredentialConfigurationData(createCredentialConfiguration("net.eidas2sandkasse:example2_sd-jwt", "net.eidas2sandkasse:example2"));
             CredentialConfigurationData input3 = new CredentialConfigurationData(createCredentialConfiguration("example3_sd-jwt", "example3"));
             when(redisService.getAll()).thenReturn(List.of(input1, input2, input3));
-            mockMvc.perform(get("/v1/public/credential-configurations/edit"))
+            mockMvc.perform(get("/v1/public/credential-configurations"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.credential_configurations", hasSize(2)))
                     .andExpect(jsonPath("$.credential_configurations[0].credential_configuration_id").value("net.eidas2sandkasse:example1_sd-jwt"))
@@ -286,18 +285,17 @@ class CredentialConfigurationControllerTest {
     }
 
     @Nested
-    @DisplayName("when calling GET to credential-configurations/issue endpoint")
+    @DisplayName("when calling GET to credential-configurations admin endpoint")
     class TestGetAllForIssue {
 
         @DisplayName("to get all credential-configurations for edit then return all registered entries with response 200")
         @Test
         void getAllRequestTest() throws Exception {
-            ObjectMapper mapper = new ObjectMapper();
             CredentialConfigurationData input1 = new CredentialConfigurationData(createCredentialConfiguration("net.eidas2sandkasse:example1_sd-jwt", "net.eidas2sandkasse:example1"));
             CredentialConfigurationData input2 = new CredentialConfigurationData(createCredentialConfiguration("net.eidas2sandkasse:example2_sd-jwt", "net.eidas2sandkasse:example2"));
             CredentialConfigurationData input3 = new CredentialConfigurationData(createCredentialConfiguration("example3_sd-jwt", "example3"));
             when(redisService.getAll()).thenReturn(List.of(input1, input2, input3));
-            mockMvc.perform(get("/v1/public/credential-configurations/issue"))
+            mockMvc.perform(get("/v1/admin/credential-configurations"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.credential_configurations", hasSize(3)))
                     .andExpect(jsonPath("$.credential_configurations[0].credential_configuration_id").value("net.eidas2sandkasse:example1_sd-jwt"))
@@ -382,11 +380,10 @@ class CredentialConfigurationControllerTest {
         @Test
         public void testDeleteAll() throws Exception {
             when(redisService.getAll()).thenReturn(List.of(createCredentialConfigurationData("cc-id", "vct_1")));
-            mockMvc.perform(delete("/v1/public/credential-configurations/all").header("X-API-KEY", "test-api-key"))
+            mockMvc.perform(delete("/v1/admin/credential-configurations/all").header("X-API-KEY", "test-api-key"))
                     .andExpect(status().isNoContent());
             verify(redisService).deleteAll();
         }
-
 
     }
 

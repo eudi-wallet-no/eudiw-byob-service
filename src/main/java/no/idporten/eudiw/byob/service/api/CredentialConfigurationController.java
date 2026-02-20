@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import no.idporten.eudiw.byob.service.config.ByobServiceProperties;
@@ -42,15 +43,9 @@ public class CredentialConfigurationController {
             @ApiResponse(responseCode = "500", description = "Internal error",
                     content = @Content(examples= @ExampleObject(description = "Intern feil", value = ByobServiceAPISwaggerExamples.SERVER_ERROR_EXAMPLE)))
     })
-    @PostMapping(path = "/v1/public/credential-configurations", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CredentialConfiguration> createCredentialConfiguration(@Valid @RequestBody CredentialConfigurationRequestResource credentialConfig){
-        CredentialConfiguration body = service.create(credentialConfig, CredentialConfigurationContext.forPublicEdit());
-        return ResponseEntity.status(HttpStatus.CREATED).body(body);
-    }
-
-    @PostMapping(path = "/v1/admin/credential-configurations", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CredentialConfiguration> createCredentialConfigurationAdmin(@Valid @RequestBody CredentialConfigurationRequestResource credentialConfig){
-        CredentialConfiguration body = service.create(credentialConfig, CredentialConfigurationContext.forAdmin());
+    @PostMapping(value = {"/v1/public/credential-configurations", "/v1/admin/credential-configurations"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CredentialConfiguration> createCredentialConfiguration(@Valid @RequestBody CredentialConfigurationRequestResource credentialConfig, HttpServletRequest request) {
+        CredentialConfiguration body = service.create(credentialConfig, CredentialConfigurationContext.fromRequest(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
@@ -63,9 +58,9 @@ public class CredentialConfigurationController {
             @ApiResponse(responseCode = "500", description = "Internal error",
                     content = @Content(examples= @ExampleObject(description = "Intern feil", value = ByobServiceAPISwaggerExamples.SERVER_ERROR_EXAMPLE)))
     })
-    @PutMapping(path = "/v1/public/credential-configurations")
-    public ResponseEntity<CredentialConfiguration> updateCredentialConfiguration(@Valid @RequestBody CredentialConfigurationRequestResource credentialConfig){
-        CredentialConfiguration body = service.update(credentialConfig, CredentialConfigurationContext.forPublicEdit());
+    @PutMapping(value = {"/v1/public/credential-configurations", "/v1/admin/credential-configurations"})
+    public ResponseEntity<CredentialConfiguration> updateCredentialConfiguration(@Valid @RequestBody CredentialConfigurationRequestResource credentialConfig, HttpServletRequest request) {
+        CredentialConfiguration body = service.update(credentialConfig, CredentialConfigurationContext.fromRequest(request));
         return ResponseEntity.ok().body(body);
     }
 
@@ -78,14 +73,14 @@ public class CredentialConfigurationController {
             @ApiResponse(responseCode = "500", description = "Internal error",
                     content = @Content(examples= @ExampleObject(description = "Intern feil", value = ByobServiceAPISwaggerExamples.SERVER_ERROR_EXAMPLE)))
     })
-    @DeleteMapping(path = "/v1/public/credential-configurations")
-    public ResponseEntity<String> deleteCredentialConfiguration(@NotEmpty @RequestParam(name = "credential-type") String credentialType){
-        service.delete(credentialType, CredentialConfigurationContext.forPublicEdit());
+    @DeleteMapping(value = {"/v1/public/credential-configurations", "/v1/admin/credential-configurations"})
+    public ResponseEntity<String> deleteCredentialConfiguration(@NotEmpty @RequestParam(name = "credential-type") String credentialType, HttpServletRequest request) {
+        service.delete(credentialType, CredentialConfigurationContext.fromRequest(request));
         return ResponseEntity.noContent().build();
     }
 
     @Hidden
-    @DeleteMapping(path = "/v1/public/credential-configurations/all")
+    @DeleteMapping(path = "/v1/admin/credential-configurations/all")
     public ResponseEntity<String> deleteAllCredentialConfiguration(@RequestHeader("X-API-KEY") String apiKey){
         if(apiKey == null || !apiKey.equals(properties.apiKey())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -95,29 +90,16 @@ public class CredentialConfigurationController {
     }
 
     @Operation(
-            summary = "Hente alle bevistyper som kan utstedes fra BYOB'en (Bring Your Own Bevis)",
+            summary = "Hente alle bevistyper fra BYOB'en (Bring Your Own Bevis)",
             description = "Hent alle dynamiske bevistyper som kan utstedes (Bring Your Own Bevis/BYOB)")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Alle bevistypene fra BYOB hentes, også de som ikke kan redigeres"),
             @ApiResponse(responseCode = "500", description = "Internal error",
                     content = @Content(examples= @ExampleObject(description = "Intern feil", value = ByobServiceAPISwaggerExamples.SERVER_ERROR_EXAMPLE)))
     })
-    @GetMapping(value = "/v1/public/credential-configurations/issue", produces =  MediaType.APPLICATION_JSON_VALUE)
-    public  ResponseEntity<CredentialConfigurations> retrieveAllCredentialConfigurationsForIssue() {
-        return ResponseEntity.ok(service.getAllEntries(CredentialConfigurationContext.forPublicRead()));
-    }
-
-    @Operation(
-            summary = "Hente alle bevistyper som kan redigeres med BYOB-en (Bring Your Own Bevis)",
-            description = "Hent alle dynamiske bevistyper som kan redigeres (Bring Your Own Bevis/BYOB)")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Alle bevistypene fra BYOB hentes"),
-            @ApiResponse(responseCode = "500", description = "Internal error",
-                    content = @Content(examples= @ExampleObject(description = "Intern feil", value = ByobServiceAPISwaggerExamples.SERVER_ERROR_EXAMPLE)))
-    })
-    @GetMapping(value = "/v1/public/credential-configurations/edit", produces =  MediaType.APPLICATION_JSON_VALUE)
-    public  ResponseEntity<CredentialConfigurations> retrieveAllCredentialConfigurationsForEdit() {
-        return ResponseEntity.ok(service.getAllEntries(CredentialConfigurationContext.forPublicEdit()));
+    @GetMapping(value = {"/v1/public/credential-configurations", "/v1/admin/credential-configurations"}, produces =  MediaType.APPLICATION_JSON_VALUE)
+    public  ResponseEntity<CredentialConfigurations> retrieveAllCredentialConfigurationsForIssue(HttpServletRequest request) {
+        return ResponseEntity.ok(service.getAllEntries(CredentialConfigurationContext.fromRequest(request)));
     }
 
     @Operation(
@@ -129,9 +111,9 @@ public class CredentialConfigurationController {
             @ApiResponse(responseCode = "404", description = "Fant ingen bevis med gitt credential type",
                     content = @Content(examples= @ExampleObject(description = "Ikke funnet", value = ByobServiceAPISwaggerExamples.NOT_FOUND)))
     })
-    @GetMapping(value = "/v1/public/credential-configurations/{credentialType}", produces =  MediaType.APPLICATION_JSON_VALUE)
-    public  ResponseEntity<CredentialConfiguration> retrieveCredentialConfiguration(@PathVariable String credentialType) {
-        return ResponseEntity.ofNullable(service.getCredentialConfiguration(credentialType, CredentialConfigurationContext.forPublicRead()));
+    @GetMapping(value = {"/v1/public/credential-configurations/{credentialType}", "/v1/admin/credential-configurations/{credentialType}"}, produces =  MediaType.APPLICATION_JSON_VALUE)
+    public  ResponseEntity<CredentialConfiguration> retrieveCredentialConfiguration(@PathVariable String credentialType, HttpServletRequest request) {
+        return ResponseEntity.ofNullable(service.getCredentialConfiguration(credentialType, CredentialConfigurationContext.fromRequest(request)));
     }
 
     @Operation(
@@ -143,7 +125,7 @@ public class CredentialConfigurationController {
             @ApiResponse(responseCode = "404", description = "Fant ingen bevis med gitt credentialConfigurationId",
                     content = @Content(examples= @ExampleObject(description = "Ikke funnet", value = ByobServiceAPISwaggerExamples.NOT_FOUND)))
     })
-    @GetMapping(value = "/v1/public/credential-configurations/search", produces =  MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {"/v1/public/credential-configurations/search", "/v1/admin/credential-configurations/search"}, produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<CredentialConfiguration> findCredentialConfigurationByCredentialConfigurationId(@RequestParam(name = "credentialConfigurationId") String credentialConfigurationId) {
         return ResponseEntity.ofNullable(service.searchCredentialConfiguration(credentialConfigurationId));
     }
