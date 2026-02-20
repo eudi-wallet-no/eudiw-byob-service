@@ -172,7 +172,7 @@ class CredentialConfigurationControllerTest {
                 verify(redisService, never()).updateBevisType(any(CredentialConfigurationData.class));
             }
 
-            @DisplayName("and update non-public credential-configuration from public API gives 400 with error response")
+            @DisplayName("and update non-public credential-configuration from public API gives 403 with error response")
             @Test
             void putUpdateNonPublicBevisNotAllowedInPublicApi() throws Exception {
                 ObjectMapper mapper = new ObjectMapper();
@@ -365,7 +365,7 @@ class CredentialConfigurationControllerTest {
             verify(redisService).delete(eq(credentialType));
         }
 
-        @DisplayName("delete a non-public credential type through public API should return 400 with error response and not delete the credential type")
+        @DisplayName("delete a non-public credential type through public API should return 403 with error response and not delete the credential type")
         @Test
         public void testDeleteNonPublicCredentialTypeThroughPublicAPIIsNotAllowed() throws Exception {
             String credentialType = "my-vct";
