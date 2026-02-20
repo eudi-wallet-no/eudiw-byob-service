@@ -48,6 +48,12 @@ public class CredentialConfigurationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(body);
     }
 
+    @PostMapping(path = "/v1/admin/credential-configurations", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<CredentialConfiguration> createCredentialConfigurationAdmin(@Valid @RequestBody CredentialConfigurationRequestResource credentialConfig){
+        CredentialConfiguration body = service.create(credentialConfig, CredentialConfigurationContext.forAdmin());
+        return ResponseEntity.status(HttpStatus.CREATED).body(body);
+    }
+
     @Operation(summary = "Oppdater bevistype",
             description = "Oppdater en eksisterende bevistype ved å sende inn den oppdaterte konfigurasjonen. Feltene credentialType og credentialConfigurationId kan ikke endres.")
     @ApiResponses({
@@ -98,7 +104,7 @@ public class CredentialConfigurationController {
     })
     @GetMapping(value = "/v1/public/credential-configurations/issue", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<CredentialConfigurations> retrieveAllCredentialConfigurationsForIssue() {
-        return ResponseEntity.ok(service.getAllEntries(CredentialConfigurationContext.forPublicIssue()));
+        return ResponseEntity.ok(service.getAllEntries(CredentialConfigurationContext.forPublicRead()));
     }
 
     @Operation(
@@ -125,7 +131,7 @@ public class CredentialConfigurationController {
     })
     @GetMapping(value = "/v1/public/credential-configurations/{credentialType}", produces =  MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<CredentialConfiguration> retrieveCredentialConfiguration(@PathVariable String credentialType) {
-        return ResponseEntity.ofNullable(service.getCredentialConfiguration(credentialType, CredentialConfigurationContext.forPublicEdit()));
+        return ResponseEntity.ofNullable(service.getCredentialConfiguration(credentialType, CredentialConfigurationContext.forPublicRead()));
     }
 
     @Operation(

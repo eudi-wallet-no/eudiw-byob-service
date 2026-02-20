@@ -18,16 +18,16 @@ public record CredentialConfigurationContext(boolean accessAll, String allowedPr
     }
 
     /**
-     * Context for public endpoints.  Access only public credential types, do anything with these.
+     * Context for public endpoints when editing.  Access only public credential types, do anything with these.
      */
     public static CredentialConfigurationContext forPublicEdit() {
         return new CredentialConfigurationContext(false, PUBLIC_CREDENTIAL_TYPE_PREFIX);
     }
 
     /**
-     * Context for public endpoints when issuing.  Use read only as this will access everything!
+     * Context for public endpoints when reading.  Use read only as this will access everything!
      */
-    public static CredentialConfigurationContext forPublicIssue() {
+    public static CredentialConfigurationContext forPublicRead() {
         return new CredentialConfigurationContext(true, "");
     }
 
