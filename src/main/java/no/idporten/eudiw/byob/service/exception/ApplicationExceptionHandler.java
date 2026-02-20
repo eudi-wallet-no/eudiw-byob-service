@@ -24,7 +24,7 @@ public class ApplicationExceptionHandler {
     }
 
     @ExceptionHandler(ForbiddenRequestException.class)
-    public ResponseEntity<ErrorResponse> handleForbidenRequestException(ForbiddenRequestException e) {
+    public ResponseEntity<ErrorResponse> handleForbiddenRequestException(ForbiddenRequestException e) {
         log.warn("Forbidden attempt to modify resource : {}", e.getMessage());
         ErrorResponse errorResponse = new ErrorResponse("invalid_request", e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
